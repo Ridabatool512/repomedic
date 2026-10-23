@@ -198,7 +198,7 @@ def _build_syntax_candidate(source: str, line_number: int, finding: dict[str, An
         lines[index] = (
             f'{indent}letters = {{letter.letter: letter.bitstring '
             f'for letter in traverse_tree(root, "")}}'
-            + ("\\n" if line.endswith("\\n") else "")
+            + ("\n" if line.endswith("\n") else "")
         )
         candidate = "".join(lines)
         try:
