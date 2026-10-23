@@ -1205,3 +1205,79 @@
   .bug-filters input { grid-column: auto; }
   .bug-findings-heading { align-items: flex-start; }
 }
+
+
+/* Red / white / black theme for bug detection and safe patch flow */
+.bug-panel,
+.bug-patch-management,
+.bug-ai-result,
+.bug-safe-patch-result,
+.bug-patch-validation,
+.bug-application-preview {
+  color: #f5f5f6;
+  background: #121214;
+  border-color: #333338;
+}
+.bug-panel-icon,
+.bug-ai-icon {
+  color: #ff5369;
+  background: #32131a;
+  border-color: #6d1b2a;
+}
+.bug-input-row button,
+.bug-action-button.primary {
+  color: #fff;
+  background: #d71935;
+  border-color: #d71935;
+}
+.bug-input-row button:hover,
+.bug-action-button.primary:hover {
+  background: #f02b46;
+}
+.bug-action-button.secondary,
+.bug-copy-button {
+  color: #f4f4f5;
+  background: #202023;
+  border-color: #3c3c41;
+}
+.bug-action-button.danger {
+  color: #fff;
+  background: #7f1022;
+  border-color: #b91c36;
+}
+.bug-filters input,
+.bug-filters select,
+.bug-input-row input {
+  color: #f7f7f8 !important;
+  background: #0b0b0d !important;
+  border-color: #45454b !important;
+  -webkit-text-fill-color: #f7f7f8;
+}
+.bug-filters select { color-scheme: dark; }
+.bug-filters select option { color: #f7f7f8; background: #151517; }
+.bug-filters input::placeholder { color: #a7a7b0; }
+.bug-panel p,
+.bug-muted,
+.bug-panel-heading p,
+.bug-field-label { color: #bdbdc6; }
+.bug-status-pill.danger,
+.bug-severity-badge.critical,
+.bug-severity-badge.high { color: #ffb6c0; background: #35151b; border-color: #7d2433; }
+.bug-status-pill.success { color: #fff; background: #242426; border-color: #444449; }
+.bug-severity-card { background: #1b1b1e; border-color: #35353a; }
+.bug-code-section pre,
+.bug-code-section code { background: #09090a; }
+.bug-code-section-heading { background: #1c1c1f; border-color: #36363b; }
+.bug-approval-check { background: #1b1b1e; border-color: #3b3b40; }
+.bug-approval-check input { accent-color: #e11d3f; }
+.bug-panel button:focus-visible,
+.bug-panel input:focus-visible,
+.bug-panel select:focus-visible {
+  outline: 2px solid #ff5268;
+  outline-offset: 2px;
+}
+@media (max-width: 700px) {
+  .bug-panel { padding: 16px; }
+  .bug-input-row { flex-direction: column; }
+  .bug-input-row button { min-height: 44px; }
+}
