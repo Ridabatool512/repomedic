@@ -307,3 +307,71 @@ pre { max-height: 260px; overflow: auto; margin: 12px 0 0; padding: 12px; color:
 #project-selector {
   margin-bottom: 20px;
 }
+
+
+/* ===== RepoMedic UI polish: contrast, controls, and responsive layout ===== */
+:root {
+  --muted: #a8b4c9;
+  --border: rgba(151, 169, 202, 0.2);
+}
+
+body { color: #edf2ff; }
+
+p,
+.input-hint,
+.path-hint,
+.sidebar-note,
+.stat-detail,
+.panel-heading p,
+.section-title-row p,
+.result-label { color: #a8b6cc; }
+
+.workspace-label,
+.field-label,
+.stat-label { color: #a4b1c7; }
+
+select,
+select.full-input,
+.bug-filters select {
+  color: #edf2ff !important;
+  color-scheme: dark;
+  background-color: #0b1220 !important;
+  border: 1px solid #3a4862 !important;
+  -webkit-text-fill-color: #edf2ff;
+}
+
+select option,
+.bug-filters select option {
+  color: #edf2ff !important;
+  background: #111827 !important;
+}
+
+input,
+textarea { color: #edf2ff; background-color: #0b1220; }
+
+input::placeholder,
+textarea::placeholder { color: #9aa9c0; opacity: 1; }
+
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #a99aff;
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .content { padding-right: 22px; padding-left: 22px; }
+  .hero { gap: 16px; }
+  .hero-art { transform: scale(.8); transform-origin: center right; }
+}
+
+@media (max-width: 700px) {
+  .sidebar .nav-link { white-space: nowrap; }
+  .sidebar { overflow-x: auto; }
+  .sidebar nav { min-width: max-content; }
+  .content { padding-right: 14px; padding-left: 14px; }
+  .section-title-row { align-items: flex-start; gap: 12px; }
+  .bug-filters { grid-template-columns: minmax(0, 1fr); }
+}
