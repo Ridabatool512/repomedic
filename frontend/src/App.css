@@ -552,3 +552,16 @@ h1, h2, h3, h4, h5, strong { color: inherit; }
 .footer > span:first-child svg {
   color: #ff667a !important;
 }
+
+
+/* Strict no-purple palette: red, white, charcoal, and neutral gray only */
+:root { --accent: #e11d3f; --accent-color: #e11d3f; --primary: #e11d3f; }
+.brand-accent, .hero h1 span, .hero-code, .orbit-node, .section-icon.purple,
+.nav-link.active, .nav-link.active svg, .primary-button, .risk-level,
+.github-import-heading > svg, .file-row svg, .footer > span:first-child svg {
+  color: #ff667a !important;
+}
+.nav-link.active { background: #35151b !important; border-color: #7d2433 !important; }
+.primary-button { background: linear-gradient(135deg, #e11d3f, #991b2b) !important; border-color: #e11d3f !important; }
+.hero-code, .orbit-node { background: #1b1b1e !important; border-color: #45454b !important; box-shadow: none !important; }
+.section-icon.purple { background: #35151b !important; }
