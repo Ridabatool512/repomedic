@@ -21,13 +21,13 @@ body {
 
 ::selection {
   color: #ffffff;
-  background: #7668dd;
+  background: #c1122f;
 }
 
 button:focus-visible,
 a:focus-visible,
 input:focus-visible {
-  outline: 2px solid #a99aff;
+  outline: 2px solid #ff667a;
   outline-offset: 3px;
 }
 
