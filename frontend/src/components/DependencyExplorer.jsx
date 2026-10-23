@@ -187,13 +187,13 @@ export default function DependencyExplorer({
         <div>
           <div className="dep-eyebrow">
             <Network size={14} />
-            CODE RELATIONSHIPS
+            HOW FILES CONNECT
           </div>
 
           <h3>Dependency map</h3>
 
           <p>
-            Explore internal imports and estimate which modules are connected.
+            See which files import or rely on other files in this project.
           </p>
         </div>
 
@@ -228,7 +228,7 @@ export default function DependencyExplorer({
 
         <Metric
           icon={ArrowDownRight}
-          label="Files with dependencies"
+          label="Files importing others"
           value={
             summary.files_with_dependencies ??
             Object.values(graph.dependencies).filter(
@@ -239,7 +239,7 @@ export default function DependencyExplorer({
 
         <Metric
           icon={AlertTriangle}
-          label="Circular cycles"
+          label="Circular imports"
           value={summary.circular_dependencies ?? cycles.length}
         />
       </div>
@@ -249,7 +249,7 @@ export default function DependencyExplorer({
           <ShieldAlert size={19} />
 
           <div>
-            <strong>Circular dependencies detected</strong>
+            <strong>Circular imports found</strong>
 
             {cycles.map((cycle, index) => (
               <p key={`${index}-${JSON.stringify(cycle)}`}>
@@ -263,7 +263,7 @@ export default function DependencyExplorer({
       ) : (
         <div className="dep-ok">
           <CheckCircle2 size={17} />
-          No circular dependencies were reported by the analyzer.
+          No circular imports found in this check.
         </div>
       )}
 
@@ -295,7 +295,7 @@ export default function DependencyExplorer({
           <input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search project files..."
+            placeholder="Find a file..."
             aria-label="Search project files"
           />
         </div>
@@ -324,9 +324,9 @@ export default function DependencyExplorer({
       {graph.files.length === 0 ? (
         <div className="dep-empty">
           <Network size={28} />
-          <strong>No dependency data yet</strong>
+          <strong>Nothing to show yet</strong>
           <p>
-            Run dependency analysis to display Python file relationships.
+            Run the dependency check to see how these files connect.
           </p>
         </div>
       ) : (
@@ -428,7 +428,7 @@ export default function DependencyExplorer({
 
                   <span>
                     <i className="dep-legend-node" />
-                    Select a file to inspect it
+                    Select a file to see its links
                   </span>
                 </div>
               </div>
