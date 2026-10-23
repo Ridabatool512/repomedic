@@ -375,3 +375,148 @@ a:focus-visible {
   .section-title-row { align-items: flex-start; gap: 12px; }
   .bug-filters { grid-template-columns: minmax(0, 1fr); }
 }
+
+
+/* =========================================================
+   RepoMedic — Red / White / Black visual refresh
+   Global theme layer: keeps existing components and behavior.
+   ========================================================= */
+:root {
+  color-scheme: dark;
+  --muted: #b8b8c2;
+  --border: rgba(255, 255, 255, 0.12);
+  --panel: #151515;
+  --accent: #ef233c;
+  --green: #f3f3f3;
+}
+
+html { background: #080808; }
+body {
+  color: #f7f7f8;
+  background: #080808 !important;
+}
+::selection { color: #fff; background: #c1122f; }
+
+.sidebar {
+  background: #0b0b0c !important;
+  border-right-color: #292929 !important;
+}
+.brand-mark,
+.section-icon,
+.stat-icon {
+  color: #fff !important;
+  background: #d71935 !important;
+  box-shadow: none !important;
+}
+.brand { color: #fff; }
+.nav-link.active,
+.sidebar .nav-link[aria-current="page"] {
+  color: #fff !important;
+  background: rgba(215, 25, 53, .16) !important;
+  border-color: rgba(239, 35, 60, .32) !important;
+}
+.nav-link.active svg { color: #ff5268 !important; }
+
+.content,
+.main-content,
+.workspace,
+.app-shell { color: #f4f4f5; }
+.card,
+.panel,
+.stat-card,
+.section-card,
+.analysis-card,
+.hero-card {
+  border-color: #2b2b2e !important;
+}
+button:not(.nav-link):not(:disabled) {
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+}
+button.primary,
+.primary-button,
+.action-button,
+.run-button,
+.hero button,
+.bug-input-row button,
+.bug-action-button.primary {
+  color: #fff !important;
+  background: #d71935 !important;
+  border-color: #d71935 !important;
+  box-shadow: none !important;
+}
+button.primary:hover,
+.primary-button:hover,
+.action-button:hover,
+.run-button:hover,
+.hero button:hover,
+.bug-input-row button:hover,
+.bug-action-button.primary:hover {
+  background: #f02b46 !important;
+  border-color: #f02b46 !important;
+}
+button.secondary,
+.secondary-button,
+.bug-action-button.secondary {
+  color: #f5f5f5 !important;
+  background: #202023 !important;
+  border: 1px solid #3a3a3e !important;
+}
+button.danger,
+.bug-action-button.danger {
+  color: #fff !important;
+  background: #7f1022 !important;
+  border-color: #b91c36 !important;
+}
+a { color: #ff667a; }
+a:hover { color: #ff9aa7; }
+
+input,
+select,
+textarea,
+input.full-input,
+select.full-input,
+textarea.full-input {
+  color: #f7f7f8 !important;
+  color-scheme: dark;
+  background: #101012 !important;
+  border-color: #3c3c41 !important;
+  -webkit-text-fill-color: #f7f7f8;
+}
+input::placeholder,
+textarea::placeholder { color: #a7a7b0 !important; opacity: 1; }
+select option {
+  color: #f7f7f8 !important;
+  background: #151517 !important;
+}
+label,
+.field-label,
+.workspace-label { color: #d5d5da; }
+p,
+.muted,
+.sidebar-note,
+.stat-detail,
+.input-hint,
+.path-hint { color: #b8b8c2; }
+h1, h2, h3, h4, h5, strong { color: inherit; }
+
+.badge,
+.pill,
+.status-pill { border-color: #3a3a3f; }
+.badge.success,
+.status-pill.success { color: #f5f5f5; background: #242426; }
+.badge.warning,
+.status-pill.warning { color: #ffb4be; background: #35151b; border-color: #72202e; }
+
+*:focus-visible {
+  outline: 2px solid #ff5268 !important;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
