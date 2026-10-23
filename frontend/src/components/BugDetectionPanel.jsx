@@ -101,14 +101,14 @@ function RecommendationPanel({ result }) {
 
       {result.explanation && (
         <div className="bug-ai-section">
-          <strong>What's wrong</strong>
+          <strong>Problem</strong>
           <p>{result.explanation}</p>
         </div>
       )}
 
       {result.recommendation && (
         <div className="bug-ai-section">
-          <strong>One way to fix it</strong>
+          <strong>Suggested fix</strong>
           <p>{result.recommendation}</p>
         </div>
       )}
@@ -949,7 +949,7 @@ export default function BugDetectionPanel({
         </div>
 
         <div>
-          <h2>Find bugs</h2>
+          <h2>Bug check</h2>
           <p>
             Detect suspicious Python patterns, security risks, and syntax
             errors in your project.
