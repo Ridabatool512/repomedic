@@ -42,3 +42,8 @@ select:focus-visible, textarea:focus-visible {
   outline: 2px solid #ff5268;
   outline-offset: 3px;
 }
+
+
+/* Keep all browser-level accents within the red/white/black palette */
+::selection { color: #fff !important; background: #c1122f !important; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline-color: #ff5268 !important; }
