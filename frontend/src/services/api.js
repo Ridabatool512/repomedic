@@ -3,7 +3,8 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || "https://repomedic-api-hyg8.onrender.com",
-  timeout: 30000,
+  // Allow large repository analyses (especially Bug Check) more time to finish.
+  timeout: 180000,
   headers: {
     "Content-Type": "application/json",
   },
