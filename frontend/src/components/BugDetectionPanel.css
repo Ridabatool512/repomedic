@@ -1281,3 +1281,10 @@
   .bug-input-row { flex-direction: column; }
   .bug-input-row button { min-height: 44px; }
 }
+
+
+/* No purple accents in bug detection controls or statuses */
+.bug-panel { --accent-color: #e11d3f; --accent: #e11d3f; }
+.bug-panel button, .bug-panel input, .bug-panel select, .bug-panel [role="button"] { accent-color: #e11d3f; }
+.bug-panel button:focus-visible, .bug-panel input:focus-visible, .bug-panel select:focus-visible { outline-color: #ff5268 !important; }
+.bug-panel .active, .bug-panel .selected { border-color: #e11d3f !important; }
