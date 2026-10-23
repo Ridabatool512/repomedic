@@ -187,13 +187,13 @@ export default function DependencyExplorer({
         <div>
           <div className="dep-eyebrow">
             <Network size={14} />
-            HOW FILES CONNECT
+            FILE DEPENDENCIES
           </div>
 
-          <h3>Dependency map</h3>
+          <h3>Dependencies</h3>
 
           <p>
-            See which files import or rely on other files in this project.
+            See which files import other files.
           </p>
         </div>
 
@@ -228,7 +228,7 @@ export default function DependencyExplorer({
 
         <Metric
           icon={ArrowDownRight}
-          label="Files importing others"
+          label="Files with imports"
           value={
             summary.files_with_dependencies ??
             Object.values(graph.dependencies).filter(
@@ -263,7 +263,7 @@ export default function DependencyExplorer({
       ) : (
         <div className="dep-ok">
           <CheckCircle2 size={17} />
-          No circular imports found in this check.
+          No circular imports found.
         </div>
       )}
 
@@ -324,9 +324,9 @@ export default function DependencyExplorer({
       {graph.files.length === 0 ? (
         <div className="dep-empty">
           <Network size={28} />
-          <strong>Nothing to show yet</strong>
+          <strong>No results yet</strong>
           <p>
-            Run the dependency check to see how these files connect.
+            Run the dependency check to see file connections.
           </p>
         </div>
       ) : (
@@ -568,7 +568,7 @@ export default function DependencyExplorer({
         <section className="dep-bottom-card">
           <h4>
             <AlertTriangle size={16} />
-            Analysis notes
+            Notes
           </h4>
 
           <p>
@@ -581,7 +581,7 @@ export default function DependencyExplorer({
           </p>
 
           <p>
-            Use Change Impact for a separate estimate of affected files.
+            Use Change Impact to check which files may be affected.
           </p>
         </section>
       </div>
