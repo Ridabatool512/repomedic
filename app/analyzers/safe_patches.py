@@ -152,6 +152,54 @@ def _replace_empty_list_defaults(
     )
 
 
+def _build_syntax_candidate(source: str, line_number: int, finding: dict[str, Any]):
+    """Build narrowly-scoped, read-only candidates for known syntax patterns."""
+    lines = source.splitlines(keepends=True)
+    index = line_number - 1
+    line = lines[index]
+    stripped = line.strip()
+    message = str(finding.get("message") or "").lower()
+
+    # Python does not allow starred iterable unpacking in a set comprehension.
+    # This pattern is only proposed when the source clearly expresses the
+    # common Sudoku peers operation; other starred comprehensions stay manual.
+    sudoku_pattern = (
+        "iterable unpacking cannot be used in comprehension" in message
+        and stripped.startswith("peers =")
+        and "{*u for u in units[s]} - {s}" in stripped
+    )
+    if sudoku_pattern:
+        indent = line[: len(line) - len(line.lstrip())]
+        lines[index] = (
+            f"{indent}peers = {{s: {{cell for unit in units[s] "
+            f"for cell in unit if cell != s}} for s in squares}}"
+            + ("\n" if line.endswith("\n") else "")
+        )
+        candidate = "".join(lines)
+        try:
+            ast.parse(candidate)
+        except SyntaxError as exc:
+            return None, f"Candidate failed syntax validation: {exc.msg} at line {exc.lineno}."
+        return candidate, (
+            "Proposed a targeted fix for the known nested set-comprehension pattern. "
+            "Syntax validation passed; review the behavior and run the project's tests."
+        )
+
+    # The Huffman expression uses dictionary unpacking where a dict
+    # comprehension is likely intended, but the key/value intent is ambiguous.
+    # Do not guess a replacement for this or unrelated syntax errors.
+    if "dict unpacking cannot be used in dict comprehension" in message:
+        return None, (
+            "Manual review required: the dictionary key/value expression is ambiguous. "
+            "Determine the intended key and value before changing this expression."
+        )
+
+    return None, (
+        "No narrowly verified automatic strategy matches this syntax error. "
+        "Review the source manually; no replacement was generated."
+    )
+
+
 def _build_candidate(
     source: str,
     line_number: int,
@@ -252,6 +300,41 @@ def generate_safe_patch(
         }
 
     rule_ids = _get_rule_ids(finding)
+
+    if "RM001" in rule_ids:
+        candidate, note = _build_syntax_candidate(source, line_number, finding)
+        if candidate is None:
+            return {
+                "available": False,
+                "patch_available": False,
+                "note": note,
+                "file": relative_file,
+                "line": line_number,
+                "read_only": True,
+                "needs_manual_review": True,
+            }
+        # Syntax candidates are preview-only and always require human review.
+        diff = "".join(
+            difflib.unified_diff(
+                source.splitlines(keepends=True),
+                candidate.splitlines(keepends=True),
+                fromfile=f"a/{relative_file}",
+                tofile=f"b/{relative_file}",
+            )
+        )
+        return {
+            "available": True,
+            "patch_available": True,
+            "file": relative_file,
+            "line": line_number,
+            "original_code": source,
+            "proposed_code": candidate,
+            "diff": diff,
+            "syntax_valid": True,
+            "read_only": True,
+            "needs_manual_review": True,
+            "note": note,
+        }
 
     if not rule_ids.intersection(SUPPORTED_RULES):
         return {
