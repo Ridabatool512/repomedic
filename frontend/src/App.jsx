@@ -390,11 +390,35 @@ function App() {
                 <span><ShieldCheck size={14} /> Change impact</span>
               </div>
             </div>
-            <div className="hero-side-note">
-              <span className="hero-side-rule" />
-              <span className="hero-side-label">WORKFLOW</span>
-              <strong>Scan <span>→</span> Inspect <span>→</span> Change</strong>
-              <small>Keep the context before you edit.</small>
+            <div className="hero-visual" aria-label="Illustration of connected project files">
+              <div className="hero-visual-top">
+                <span><span className="hero-live-dot" /> DEPENDENCY MAP</span>
+                <span className="hero-visual-count">03 FILES</span>
+              </div>
+              <div className="dependency-mini-map">
+                <svg className="dependency-lines" viewBox="0 0 250 148" fill="none" aria-hidden="true">
+                  <path className="dependency-line line-a" d="M125 42 V65 H57 V86" />
+                  <path className="dependency-line line-b" d="M125 65 H193 V86" />
+                  <circle cx="125" cy="65" r="3" fill="#f07a88" />
+                </svg>
+                <div className="mini-file mini-file-main">
+                  <FileCode2 size={16} />
+                  <span><strong>main.py</strong><small>entry point</small></span>
+                  <i />
+                </div>
+                <div className="mini-file mini-file-left">
+                  <Code2 size={15} />
+                  <span><strong>parser.py</strong><small>dependency</small></span>
+                </div>
+                <div className="mini-file mini-file-right">
+                  <ShieldCheck size={15} />
+                  <span><strong>checks.py</strong><small>dependent</small></span>
+                </div>
+              </div>
+              <div className="hero-visual-footer">
+                <span className="hero-scan-bar"><i /></span>
+                <span>Tracing relationships<span className="hero-ellipsis">...</span></span>
+              </div>
             </div>
           </section>
 
