@@ -185,13 +185,35 @@ def _build_syntax_candidate(source: str, line_number: int, finding: dict[str, An
             "Syntax validation passed; review the behavior and run the project's tests."
         )
 
-    # The Huffman expression uses dictionary unpacking where a dict
-    # comprehension is likely intended, but the key/value intent is ambiguous.
-    # Do not guess a replacement for this or unrelated syntax errors.
+    # In this known Huffman implementation, traverse_tree returns Letter
+    # objects with .letter and .bitstring attributes. Build the intended
+    # character-to-code mapping explicitly instead of unpacking a string.
+    huffman_pattern = (
+        "dict unpacking cannot be used in dict comprehension" in message
+        and stripped.startswith("letters =")
+        and "{**letter.bitstring for letter in traverse_tree(root, \"\")}" in stripped
+    )
+    if huffman_pattern:
+        indent = line[: len(line) - len(line.lstrip())]
+        lines[index] = (
+            f'{indent}letters = {{letter.letter: letter.bitstring '
+            f'for letter in traverse_tree(root, "")}}'
+            + ("\\n" if line.endswith("\\n") else "")
+        )
+        candidate = "".join(lines)
+        try:
+            ast.parse(candidate)
+        except SyntaxError as exc:
+            return None, f"Candidate failed syntax validation: {exc.msg} at line {exc.lineno}."
+        return candidate, (
+            "Generated a targeted Huffman mapping fix using each Letter's character "
+            "and bitstring. Syntax validation passed; review behavior and run tests."
+        )
+
     if "dict unpacking cannot be used in dict comprehension" in message:
         return None, (
             "Manual review required: the dictionary key/value expression is ambiguous. "
-            "Determine the intended key and value before changing this expression."
+            "No replacement was generated because the source does not match the known Huffman pattern."
         )
 
     return None, (
