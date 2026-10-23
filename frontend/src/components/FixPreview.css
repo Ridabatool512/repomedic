@@ -426,3 +426,9 @@
   outline: 2px solid #f87171;
   outline-offset: 3px;
 }
+
+
+/* No purple accents in fix preview */
+.fix-preview { --accent: #e11d3f; --accent-color: #e11d3f; }
+.fix-preview button:focus-visible, .fix-preview input:focus-visible { outline-color: #ff5268 !important; }
+.fix-preview [aria-selected="true"], .fix-preview .active { border-color: #e11d3f !important; }
