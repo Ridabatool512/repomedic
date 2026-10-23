@@ -368,43 +368,33 @@ function App() {
 
         <div className="content">
           <section className="hero">
-            <div>
+            <div className="hero-copy">
               <div className="eyebrow">
-                <Sparkles size={14} />
-                CODEBASE INTELLIGENCE
+                <span className="hero-live-dot" />
+                REPOSITORY WORKSPACE
               </div>
 
               <h1>
-                Know your code.
-                <br />
-                <span>Change it with confidence.</span>
+                Understand what a change<br className="hero-desktop-break" />
+                <span>could break.</span>
               </h1>
 
               <p>
-                Scan Python projects, explore dependencies, and
-                estimate the impact of code changes.
+                Inspect Python files, trace dependencies, and check the
+                likely impact before you commit. Start with a local project
+                or bring in a public GitHub repository below.
               </p>
-            </div>
-
-            <div className="hero-art" aria-hidden="true">
-              <div className="orbit orbit-one" />
-              <div className="orbit orbit-two" />
-
-              <div className="hero-code">
-                <Code2 size={52} strokeWidth={1.2} />
+              <div className="hero-meta">
+                <span><Code2 size={14} /> Python analysis</span>
+                <span><GitBranch size={14} /> Dependency mapping</span>
+                <span><ShieldCheck size={14} /> Change impact</span>
               </div>
-
-              <span className="orbit-node node-one">
-                <GitBranch size={17} />
-              </span>
-
-              <span className="orbit-node node-two">
-                <Boxes size={17} />
-              </span>
-
-              <span className="orbit-node node-three">
-                <ShieldCheck size={17} />
-              </span>
+            </div>
+            <div className="hero-side-note">
+              <span className="hero-side-rule" />
+              <span className="hero-side-label">WORKFLOW</span>
+              <strong>Scan <span>→</span> Inspect <span>→</span> Change</strong>
+              <small>Keep the context before you edit.</small>
             </div>
           </section>
 
