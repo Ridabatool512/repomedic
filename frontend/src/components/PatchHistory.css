@@ -1,0 +1,350 @@
+
+.patch-history-panel {
+  width: 100%;
+  margin-top: 28px;
+  padding: 24px;
+  color: var(--text-primary, #e8eaf0);
+  background: var(--surface, #151923);
+  border: 1px solid var(--border, #2b3040);
+  border-radius: 18px;
+  box-sizing: border-box;
+}
+
+.patch-history-header,
+.patch-history-heading,
+.patch-history-item-top,
+.patch-history-file,
+.patch-history-backup,
+.patch-history-id,
+.patch-history-actions {
+  display: flex;
+  align-items: center;
+}
+
+.patch-history-header,
+.patch-history-item-top {
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.patch-history-heading {
+  gap: 13px;
+}
+
+.patch-history-icon,
+.patch-history-file-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  color: #b7c6ff;
+  background: #252e49;
+  border: 1px solid #354266;
+  border-radius: 12px;
+}
+
+.patch-history-icon {
+  width: 44px;
+  height: 44px;
+}
+
+.patch-history-file-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.patch-history-heading h2 {
+  margin: 0;
+  font-size: 19px;
+}
+
+.patch-history-heading p,
+.patch-history-file p {
+  margin: 5px 0 0;
+  color: var(--text-muted, #a0a7b7);
+  font-size: 13px;
+}
+
+.patch-history-refresh,
+.patch-history-id button,
+.patch-history-rollback {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 13px;
+  color: inherit;
+  background: #222838;
+  border: 1px solid #373f53;
+  border-radius: 9px;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.patch-history-refresh:hover,
+.patch-history-id button:hover {
+  background: #2b3448;
+  border-color: #6678a9;
+}
+
+.patch-history-refresh:disabled,
+.patch-history-rollback:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.patch-history-project {
+  display: grid;
+  gap: 7px;
+  margin-top: 22px;
+  padding: 13px;
+  background: #10141d;
+  border: 1px solid #2a3040;
+  border-radius: 10px;
+}
+
+.patch-history-project span,
+.patch-history-id > span {
+  color: var(--text-muted, #9da6b7);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.patch-history-project code,
+.patch-history-id code {
+  overflow-wrap: anywhere;
+  color: #c8d4ff;
+  font-size: 12px;
+}
+
+.patch-history-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0 22px;
+}
+
+.patch-history-stats > div {
+  display: grid;
+  gap: 8px;
+  padding: 15px;
+  background: #1b202d;
+  border: 1px solid #303647;
+  border-radius: 12px;
+}
+
+.patch-history-stats span {
+  color: var(--text-muted, #a0a7b7);
+  font-size: 12px;
+}
+
+.patch-history-stats strong {
+  font-size: 23px;
+}
+
+.patch-history-list {
+  display: grid;
+  gap: 13px;
+}
+
+.patch-history-item {
+  min-width: 0;
+  padding: 17px;
+  background: #191e2a;
+  border: 1px solid #303647;
+  border-radius: 13px;
+}
+
+.patch-history-file {
+  min-width: 0;
+  gap: 11px;
+}
+
+.patch-history-file h3 {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 15px;
+}
+
+.patch-history-status {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 6px;
+  padding: 6px 9px;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.patch-history-status.is-applied {
+  color: #a9e5c3;
+  background: #183528;
+  border-color: #28583d;
+}
+
+.patch-history-status.is-rolled-back {
+  color: #c4ccdb;
+  background: #292f3c;
+  border-color: #41495b;
+}
+
+.patch-history-status.is-unknown {
+  color: #e9d4a4;
+  background: #342d1f;
+  border-color: #5b4a2c;
+}
+
+.patch-history-id {
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 17px;
+  padding: 10px;
+  background: #11151e;
+  border-radius: 8px;
+}
+
+.patch-history-id > span {
+  width: 100%;
+}
+
+.patch-history-id code {
+  flex: 1;
+  min-width: 100px;
+}
+
+.patch-history-id button {
+  padding: 6px 9px;
+}
+
+.patch-history-backup {
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 14px;
+  color: #a9e5c3;
+}
+
+.patch-history-backup > div {
+  min-width: 0;
+}
+
+.patch-history-backup strong {
+  color: var(--text-primary, #e8eaf0);
+  font-size: 12px;
+}
+
+.patch-history-backup p {
+  margin: 5px 0 0;
+  color: var(--text-muted, #a0a7b7);
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.patch-history-rollback-date {
+  color: var(--text-muted, #a0a7b7);
+  font-size: 12px;
+}
+
+.patch-history-actions {
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.patch-history-rollback {
+  color: #ffd3a4;
+  background: #33271e;
+  border-color: #61452e;
+}
+
+.patch-history-rollback:hover:not(:disabled) {
+  background: #453326;
+  border-color: #9a7049;
+}
+
+.patch-history-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin: 14px 0;
+  padding: 12px;
+  border-radius: 9px;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.patch-history-message.is-error {
+  color: #ffb5b5;
+  background: #351f26;
+  border: 1px solid #66303b;
+}
+
+.patch-history-message.is-success {
+  color: #b8ebc8;
+  background: #193226;
+  border: 1px solid #315d42;
+}
+
+.patch-history-empty {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 35px 15px;
+  color: var(--text-muted, #a0a7b7);
+  text-align: center;
+}
+
+.patch-history-empty strong {
+  color: var(--text-primary, #e8eaf0);
+}
+
+.patch-history-empty p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.patch-history-spin {
+  animation: patch-history-rotate 1s linear infinite;
+}
+
+@keyframes patch-history-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .patch-history-panel {
+    padding: 15px;
+  }
+
+  .patch-history-header,
+  .patch-history-item-top {
+    align-items: flex-start;
+  }
+
+  .patch-history-stats {
+    gap: 7px;
+  }
+
+  .patch-history-stats > div {
+    padding: 10px;
+  }
+
+  .patch-history-stats strong {
+    font-size: 19px;
+  }
+
+  .patch-history-status {
+    font-size: 10px;
+  }
+
+  .patch-history-refresh {
+    padding: 8px;
+    font-size: 12px;
+  }
+}
