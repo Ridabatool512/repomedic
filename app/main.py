@@ -70,10 +70,37 @@ def validate_project_path(project_path: str) -> Path:
         ) from exc
 
     if not path.exists():
-        raise HTTPException(
-            status_code=404,
-            detail="Project directory does not exist.",
-        )
+        # Render's free filesystem is temporary. If a previously imported
+        # GitHub repository has disappeared, restore it from its canonical
+        # workspace/github/<owner>/<repository> location. This is safe because
+        # the path has already been restricted to WORKSPACE_ROOT above.
+        github_root = (WORKSPACE_ROOT / "github").resolve()
+
+        try:
+            relative_to_github_root = path.relative_to(github_root)
+        except ValueError:
+            relative_to_github_root = None
+
+        if (
+            relative_to_github_root is not None
+            and len(relative_to_github_root.parts) == 2
+            and all(relative_to_github_root.parts)
+        ):
+            owner, repository = relative_to_github_root.parts
+
+            # Use the same importer as the explicit GitHub import endpoint.
+            # It validates owner/repository names and only clones public GitHub
+            # repositories into the workspace.
+            import_public_repository(
+                f"https://github.com/{owner}/{repository}"
+            )
+            path = path.resolve()
+
+        if not path.exists():
+            raise HTTPException(
+                status_code=404,
+                detail="Project directory does not exist.",
+            )
 
     if not path.is_dir():
         raise HTTPException(
