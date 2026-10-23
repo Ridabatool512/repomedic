@@ -204,7 +204,53 @@ function App() {
     }
 
     return runAction("scan", async () => {
-      const result = await scanProject(path);
+      let result;
+
+      try {
+        result = await scanProject(path);
+      } catch (scanError) {
+        const missingDirectory =
+          scanError?.response?.status === 404 &&
+          scanError?.response?.data?.detail ===
+            "Project directory does not exist.";
+
+        const savedRepository = repositories.find(
+          (repo) => repo.project_path === path
+        );
+
+        // Render's temporary filesystem can lose cloned files after a
+        // restart. Re-clone a saved public repository and retry once.
+        if (!missingDirectory || !savedRepository?.repository_url) {
+          throw scanError;
+        }
+
+        setNotice(
+          "Saved project files are missing on the server. Restoring the repository from GitHub..."
+        );
+
+        const restored = await importGitHubRepository(
+          savedRepository.repository_url
+        );
+
+        const updatedRepositories = [
+          {
+            ...savedRepository,
+            ...restored,
+          },
+          ...repositories.filter(
+            (repo) => repo.project_path !== savedRepository.project_path
+          ),
+        ];
+
+        setRepositories(updatedRepositories);
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(updatedRepositories)
+        );
+
+        setProjectPath(restored.project_path);
+        result = await scanProject(restored.project_path);
+      }
 
       setScan(result);
       setDependencies(null);
