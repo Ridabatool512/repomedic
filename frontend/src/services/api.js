@@ -9,13 +9,31 @@ const api = axios.create({
   },
 });
 
-// Health check
+// ============================================================
+// HEALTH CHECK
+// ============================================================
+
 export async function getHealth() {
   const response = await api.get("/health");
   return response.data;
 }
 
-// Project scanning
+// ============================================================
+// GITHUB REPOSITORY IMPORT
+// ============================================================
+
+export async function importGitHubRepository(repositoryUrl) {
+  const response = await api.post("/api/github/import", {
+    repository_url: repositoryUrl.trim(),
+  });
+
+  return response.data;
+}
+
+// ============================================================
+// PROJECT SCANNING
+// ============================================================
+
 export async function scanProject(projectPath) {
   const response = await api.post("/api/scan", {
     project_path: projectPath,
@@ -24,7 +42,10 @@ export async function scanProject(projectPath) {
   return response.data;
 }
 
-// Dependency analysis
+// ============================================================
+// DEPENDENCY ANALYSIS
+// ============================================================
+
 export async function analyzeDependencies(projectPath) {
   const response = await api.post("/api/dependencies", {
     project_path: projectPath,
@@ -33,7 +54,10 @@ export async function analyzeDependencies(projectPath) {
   return response.data;
 }
 
-// Change impact analysis
+// ============================================================
+// CHANGE IMPACT ANALYSIS
+// ============================================================
+
 export async function analyzeImpact(projectPath, changedFile) {
   const response = await api.post("/api/impact", {
     project_path: projectPath,
@@ -43,7 +67,10 @@ export async function analyzeImpact(projectPath, changedFile) {
   return response.data;
 }
 
-// Bug detection
+// ============================================================
+// SMART BUG DETECTION
+// ============================================================
+
 export async function detectBugs(projectPath) {
   const response = await api.post("/api/bugs", {
     project_path: projectPath,
@@ -52,7 +79,10 @@ export async function detectBugs(projectPath) {
   return response.data;
 }
 
-// Preview a recommended bug fix
+// ============================================================
+// BUG FIX PREVIEW
+// ============================================================
+
 export async function previewBugFix(projectPath, finding) {
   const response = await api.post("/api/bugs/fix-preview", {
     project_path: projectPath,
@@ -69,7 +99,10 @@ export async function previewBugFix(projectPath, finding) {
   return response.data;
 }
 
-// Generate a fix recommendation
+// ============================================================
+// FIX RECOMMENDATION
+// ============================================================
+
 export async function recommendFix(projectPath, finding) {
   const response = await api.post("/api/bugs/recommend-fix", {
     project_path: projectPath,
@@ -86,7 +119,10 @@ export async function recommendFix(projectPath, finding) {
   return response.data;
 }
 
-// Generate a safe, read-only patch candidate
+// ============================================================
+// SAFE PATCH PREVIEW
+// ============================================================
+
 export async function safePatchPreview(projectPath, finding) {
   const response = await api.post("/api/bugs/safe-patch", {
     project_path: projectPath,
@@ -105,7 +141,10 @@ export async function safePatchPreview(projectPath, finding) {
   return response.data;
 }
 
-// Validate proposed code syntax and optionally run tests
+// ============================================================
+// PATCH VALIDATION
+// ============================================================
+
 export async function validatePatch(
   projectPath,
   file,
@@ -122,7 +161,10 @@ export async function validatePatch(
   return response.data;
 }
 
-// Preview patch application without modifying the source file
+// ============================================================
+// PATCH APPLICATION PREVIEW
+// ============================================================
+
 export async function previewApplication(
   projectPath,
   file,
@@ -137,7 +179,10 @@ export async function previewApplication(
   return response.data;
 }
 
-// Apply a patch only when the user explicitly approves it
+// ============================================================
+// APPLY AN EXPLICITLY APPROVED PATCH
+// ============================================================
+
 export async function applyApprovedPatch(
   projectPath,
   file,
@@ -154,20 +199,26 @@ export async function applyApprovedPatch(
   return response.data;
 }
 
-// Roll back an applied patch using its patch ID
-export async function rollbackPatch(projectPath, patchId) {
-  const response = await api.post("/api/bugs/rollback-patch", {
+// ============================================================
+// PATCH HISTORY
+// ============================================================
+
+export async function getPatchHistory(projectPath) {
+  const response = await api.post("/api/bugs/patch-history", {
     project_path: projectPath,
-    patch_id: patchId,
   });
 
   return response.data;
 }
 
-// Retrieve patch history for a project
-export async function getPatchHistory(projectPath) {
-  const response = await api.post("/api/bugs/patch-history", {
+// ============================================================
+// ROLLBACK AN APPLIED PATCH
+// ============================================================
+
+export async function rollbackPatch(projectPath, patchId) {
+  const response = await api.post("/api/bugs/rollback-patch", {
     project_path: projectPath,
+    patch_id: patchId,
   });
 
   return response.data;

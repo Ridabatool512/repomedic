@@ -103,7 +103,17 @@ export default function PatchHistory({
   }, [projectPath]);
 
   useEffect(() => {
-    loadHistory();
+    let cancelled = false;
+
+    Promise.resolve().then(() => {
+      if (!cancelled) {
+        loadHistory();
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
   }, [loadHistory]);
 
   async function handleRollback(patch) {

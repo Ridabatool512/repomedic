@@ -244,45 +244,66 @@ def _is_relative_or_local_import(
     )
 
 
+
 def _find_cycles(graph: dict[str, list[str]]) -> list[list[str]]:
-    """Find circular dependency paths using depth-first search."""
+    """Find cyclic groups of files using Tarjan's SCC algorithm.
 
-    cycles = []
-    seen_cycles = set()
-    visited = set()
-    active = []
-    active_set = set()
+    Each returned group represents one strongly connected component.
+    A component is cyclic if it contains multiple nodes or a self-loop.
+    The existing API response format remains a list of file paths.
+    """
 
-    def visit(node: str) -> None:
-        visited.add(node)
-        active.append(node)
-        active_set.add(node)
+    index = 0
+    indices: dict[str, int] = {}
+    lowlinks: dict[str, int] = {}
+    stack: list[str] = []
+    on_stack: set[str] = set()
+    cycles: list[list[str]] = []
 
-        for neighbor in graph.get(node, []):
-            if neighbor not in visited:
-                visit(neighbor)
-            elif neighbor in active_set:
-                start = active.index(neighbor)
-                cycle = active[start:] + [neighbor]
+    def strong_connect(node: str) -> None:
+        nonlocal index
 
-                # Canonicalize the cycle so rotated duplicates are removed.
-                ring = cycle[:-1]
-                rotations = [
-                    tuple(ring[index:] + ring[:index])
-                    for index in range(len(ring))
-                ]
-                canonical = min(rotations)
+        indices[node] = index
+        lowlinks[node] = index
+        index += 1
 
-                if canonical not in seen_cycles:
-                    seen_cycles.add(canonical)
-                    cycles.append(list(canonical) + [canonical[0]])
+        stack.append(node)
+        on_stack.add(node)
 
-        active.pop()
-        active_set.remove(node)
+        for neighbor in sorted(graph.get(node, [])):
+            if neighbor not in graph:
+                continue
+
+            if neighbor not in indices:
+                strong_connect(neighbor)
+                lowlinks[node] = min(lowlinks[node], lowlinks[neighbor])
+            elif neighbor in on_stack:
+                lowlinks[node] = min(lowlinks[node], indices[neighbor])
+
+        if lowlinks[node] == indices[node]:
+            component = []
+
+            while stack:
+                member = stack.pop()
+                on_stack.remove(member)
+                component.append(member)
+
+                if member == node:
+                    break
+
+            component.sort()
+
+            has_self_loop = (
+                len(component) == 1
+                and component[0] in graph.get(component[0], [])
+            )
+
+            if len(component) > 1 or has_self_loop:
+                cycles.append(component + [component[0]])
 
     for node in sorted(graph):
-        if node not in visited:
-            visit(node)
+        if node not in indices:
+            strong_connect(node)
 
     return sorted(cycles)
 

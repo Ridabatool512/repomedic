@@ -14,6 +14,7 @@ import {
   Play,
   ShieldCheck,
   Sparkles,
+  FolderGit2,
 } from "lucide-react";
 
 import BugDetectionPanel from "./components/BugDetectionPanel";
@@ -23,12 +24,58 @@ import {
   analyzeDependencies,
   analyzeImpact,
   scanProject,
+  importGitHubRepository,
 } from "./services/api";
 
 import "./App.css";
 
 const DEFAULT_PROJECT =
   "C:\\Users\\Rida Batool\\repomedic\\workspace\\demo-project";
+
+const STORAGE_KEY = "repomedic-imported-repositories";
+
+function getSavedRepositories() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem(STORAGE_KEY) || "[]"
+    );
+
+    return Array.isArray(saved)
+      ? saved.filter(
+          (repo) =>
+            repo &&
+            typeof repo.project_path === "string" &&
+            typeof repo.repository_url === "string"
+        )
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+function getErrorMessage(error) {
+  const detail = error?.response?.data?.detail;
+
+  if (typeof detail === "string") {
+    return detail;
+  }
+
+  if (Array.isArray(detail)) {
+    return detail
+      .map((item) => item.msg || JSON.stringify(item))
+      .join(", ");
+  }
+
+  if (error?.code === "ECONNABORTED") {
+    return "The request timed out. Try again with a smaller project.";
+  }
+
+  if (!error?.response) {
+    return "Could not connect to the RepoMedic API. Make sure the backend is running at http://127.0.0.1:8000.";
+  }
+
+  return error?.message || "Something went wrong. Please try again.";
+}
 
 function StatCard({ icon: Icon, label, value, detail }) {
   return (
@@ -48,13 +95,44 @@ function StatCard({ icon: Icon, label, value, detail }) {
 
 function App() {
   const [projectPath, setProjectPath] = useState(DEFAULT_PROJECT);
+  const [repositories, setRepositories] = useState(getSavedRepositories);
+  const [githubUrl, setGithubUrl] = useState("");
+
   const [scan, setScan] = useState(null);
   const [dependencies, setDependencies] = useState(null);
   const [impact, setImpact] = useState(null);
   const [changedFile, setChangedFile] = useState("");
+
   const [loading, setLoading] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+
+  function resetAnalysis() {
+    setScan(null);
+    setDependencies(null);
+    setImpact(null);
+    setChangedFile("");
+  }
+
+  function selectProject(path) {
+    if (!path || path === projectPath) {
+      return;
+    }
+
+    setProjectPath(path);
+    resetAnalysis();
+    setError("");
+    setNotice(
+      "Project selected. Run a scan to analyze this codebase."
+    );
+  }
+
+  function handleProjectPathInput(value) {
+    setProjectPath(value);
+    resetAnalysis();
+    setError("");
+    setNotice("");
+  }
 
   async function runAction(action, task) {
     setLoading(action);
@@ -64,24 +142,69 @@ function App() {
     try {
       await task();
     } catch (err) {
-      setError(
-        err.response?.data?.detail ||
-          err.message ||
-          "Something went wrong. Check that the API is running.",
-      );
+      setError(getErrorMessage(err));
     } finally {
       setLoading("");
     }
   }
 
+  async function handleImportGitHub() {
+    const url = githubUrl.trim();
+
+    if (!url) {
+      setError("Enter a public GitHub repository URL first.");
+      return;
+    }
+
+    return runAction("github", async () => {
+      const result = await importGitHubRepository(url);
+
+      const imported = {
+        owner: result.owner,
+        repository: result.repository,
+        repository_url: result.repository_url,
+        project_path: result.project_path,
+      };
+
+      const updated = [
+        imported,
+        ...repositories.filter(
+          (repo) =>
+            repo.project_path !== imported.project_path
+        ),
+      ];
+
+      setRepositories(updated);
+
+      try {
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify(updated)
+        );
+      } catch {
+        // The imported repository remains available this session.
+      }
+
+      setGithubUrl("");
+      setProjectPath(imported.project_path);
+      resetAnalysis();
+
+      setNotice(
+        `Successfully imported ${imported.owner}/${imported.repository}. Run a scan to analyze it.`
+      );
+    });
+  }
+
   async function handleScan() {
-    if (!projectPath.trim()) {
+    const path = projectPath.trim();
+
+    if (!path) {
       setError("Enter a project folder path first.");
       return;
     }
 
     return runAction("scan", async () => {
-      const result = await scanProject(projectPath.trim());
+      const result = await scanProject(path);
 
       setScan(result);
       setDependencies(null);
@@ -93,30 +216,35 @@ function App() {
   }
 
   async function handleDependencies() {
-    if (!projectPath.trim()) {
+    const path = projectPath.trim();
+
+    if (!path) {
       setError("Enter a project folder path first.");
       return;
     }
 
     return runAction("dependencies", async () => {
-      const result = await analyzeDependencies(projectPath.trim());
+      const result = await analyzeDependencies(path);
 
       setDependencies(result);
-      setNotice("Dependency analysis completed successfully.");
+      setNotice(
+        "Dependency analysis completed successfully."
+      );
     });
   }
 
   async function handleImpact(fileToAnalyze = changedFile) {
     const file = fileToAnalyze.trim();
+    const path = projectPath.trim();
 
     if (!file) {
       setError(
-        "Select a file in the dependency graph or enter a project-relative path.",
+        "Select a file in the dependency graph or enter a project-relative path."
       );
       return;
     }
 
-    if (!projectPath.trim()) {
+    if (!path) {
       setError("Enter a project folder path first.");
       return;
     }
@@ -124,10 +252,12 @@ function App() {
     setChangedFile(file);
 
     return runAction("impact", async () => {
-      const result = await analyzeImpact(projectPath.trim(), file);
+      const result = await analyzeImpact(path, file);
 
       setImpact(result);
-      setNotice(`Change-impact analysis completed for ${file}.`);
+      setNotice(
+        `Change-impact analysis completed for ${file}.`
+      );
     });
   }
 
@@ -135,13 +265,13 @@ function App() {
     setChangedFile(file);
     setImpact(null);
     setError("");
+
     setNotice(
-      `Selected ${file}. Click Analyze change impact to inspect its dependents.`,
+      `Selected ${file}. Click Analyze change impact to inspect its dependents.`
     );
   }
 
   const summary = scan?.summary ?? {};
-
   const syntaxErrors = summary.syntax_errors ?? 0;
   const pythonFiles = summary.python_files ?? 0;
 
@@ -149,17 +279,14 @@ function App() {
     ? Object.values(dependencies.dependencies ?? {}).reduce(
         (total, items) =>
           total + (Array.isArray(items) ? items.length : 0),
-        0,
+        0
       )
     : 0;
 
   const affectedFiles =
-    impact?.affected_files ??
-    impact?.impacted_files ??
-    [];
+    impact?.affected_files ?? impact?.impacted_files ?? [];
 
   const riskScore = impact?.risk_score ?? impact?.score;
-
   const numericRisk = Number(riskScore);
 
   const hasRiskScore =
@@ -172,9 +299,7 @@ function App() {
     : 0;
 
   const riskLabel =
-    impact?.risk_level ??
-    impact?.risk ??
-    "Analysis complete";
+    impact?.risk_level ?? impact?.risk ?? "Analysis complete";
 
   return (
     <main className="app-shell">
@@ -214,7 +339,6 @@ function App() {
         <div className="sidebar-bottom">
           <div className="api-status">
             <span className="status-dot" />
-
             <div>
               <strong>Local API</strong>
               <small>127.0.0.1:8000</small>
@@ -257,8 +381,8 @@ function App() {
               </h1>
 
               <p>
-                Scan Python projects, explore dependencies, and estimate
-                the impact of code changes.
+                Scan Python projects, explore dependencies, and
+                estimate the impact of code changes.
               </p>
             </div>
 
@@ -293,12 +417,46 @@ function App() {
               <div>
                 <h2>Project workspace</h2>
                 <p>
-                  Choose a project folder inside your configured workspace.
+                  Analyze your demo project or import a public
+                  GitHub repository.
                 </p>
               </div>
             </div>
 
-            <label className="field-label" htmlFor="project-path">
+            <label
+              className="field-label"
+              htmlFor="project-selector"
+            >
+              SELECT PROJECT
+            </label>
+
+            <select
+              id="project-selector"
+              className="full-input"
+              value={projectPath}
+              onChange={(event) =>
+                selectProject(event.target.value)
+              }
+              disabled={Boolean(loading)}
+            >
+              <option value={DEFAULT_PROJECT}>
+                Demo project
+              </option>
+
+              {repositories.map((repo) => (
+                <option
+                  key={repo.project_path}
+                  value={repo.project_path}
+                >
+                  {repo.owner}/{repo.repository}
+                </option>
+              ))}
+            </select>
+
+            <label
+              className="field-label"
+              htmlFor="project-path"
+            >
               PROJECT PATH
             </label>
 
@@ -306,18 +464,26 @@ function App() {
               <input
                 id="project-path"
                 value={projectPath}
-                onChange={(event) => setProjectPath(event.target.value)}
+                onChange={(event) =>
+                  handleProjectPathInput(event.target.value)
+                }
                 placeholder="Absolute path to your project folder"
+                disabled={Boolean(loading)}
               />
 
               <button
                 type="button"
                 className="primary-button"
                 onClick={handleScan}
-                disabled={Boolean(loading) || !projectPath.trim()}
+                disabled={
+                  Boolean(loading) || !projectPath.trim()
+                }
               >
                 {loading === "scan" ? (
-                  <LoaderCircle className="spin" size={17} />
+                  <LoaderCircle
+                    className="spin"
+                    size={17}
+                  />
                 ) : (
                   <Play size={16} />
                 )}
@@ -331,15 +497,112 @@ function App() {
               Local scanning is restricted to your workspace.
             </div>
 
+            <div className="github-import-section">
+              <div className="github-import-heading">
+                <GitBranch size={20} />
+
+                <div>
+                  <h3>Import from GitHub</h3>
+                  <p>
+                    Import a public repository to analyze its code.
+                  </p>
+                </div>
+              </div>
+
+              <label
+                className="field-label"
+                htmlFor="github-repository-url"
+              >
+                GITHUB REPOSITORY URL
+              </label>
+
+              <div className="project-input-row">
+                <input
+                  id="github-repository-url"
+                  type="url"
+                  value={githubUrl}
+                  onChange={(event) =>
+                    setGithubUrl(event.target.value)
+                  }
+                  placeholder="https://github.com/owner/repository"
+                  disabled={Boolean(loading)}
+                />
+
+                <button
+                  type="button"
+                  className="primary-button"
+                  onClick={handleImportGitHub}
+                  disabled={
+                    Boolean(loading) || !githubUrl.trim()
+                  }
+                >
+                  {loading === "github" ? (
+                    <LoaderCircle
+                      className="spin"
+                      size={17}
+                    />
+                  ) : (
+                    <FolderGit2 size={17} />
+                  )}
+
+                  {loading === "github"
+                    ? "Importing..."
+                    : "Import repository"}
+                </button>
+              </div>
+
+              <p className="input-hint">
+                Public repositories only. Imported code is cloned
+                locally; RepoMedic does not run repository scripts
+                during import.
+              </p>
+
+              {repositories.length > 0 && (
+                <div className="imported-repositories">
+                  <strong>Imported repositories</strong>
+
+                  {repositories.map((repo) => (
+                    <div
+                      className="file-row"
+                      key={repo.project_path}
+                    >
+                      <GitBranch size={15} />
+
+                      <span>
+                        {repo.owner}/{repo.repository}
+                      </span>
+
+                      <button
+                        type="button"
+                        className="text-button"
+                        onClick={() =>
+                          selectProject(repo.project_path)
+                        }
+                        disabled={Boolean(loading)}
+                      >
+                        Select
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {error && (
-              <div className="message error-message" role="alert">
+              <div
+                className="message error-message"
+                role="alert"
+              >
                 <AlertTriangle size={17} />
                 <span>{error}</span>
               </div>
             )}
 
             {notice && (
-              <div className="message success-message" role="status">
+              <div
+                className="message success-message"
+                role="status"
+              >
                 <CheckCircle2 size={17} />
                 <span>{notice}</span>
               </div>
@@ -353,7 +616,9 @@ function App() {
             </div>
 
             <span
-              className={`scan-badge ${scan ? "scan-complete" : ""}`}
+              className={`scan-badge ${
+                scan ? "scan-complete" : ""
+              }`}
             >
               <span className="status-dot" />
               {scan ? "Scan complete" : "Awaiting scan"}
@@ -371,14 +636,18 @@ function App() {
             <StatCard
               icon={Code2}
               label="Functions"
-              value={scan ? (summary.functions ?? "—") : "—"}
+              value={
+                scan ? (summary.functions ?? "—") : "—"
+              }
               detail="Functions detected"
             />
 
             <StatCard
               icon={GitBranch}
               label="Imports"
-              value={scan ? (summary.imports ?? "—") : "—"}
+              value={
+                scan ? (summary.imports ?? "—") : "—"
+              }
               detail="Import statements"
             />
 
@@ -396,8 +665,14 @@ function App() {
             />
           </section>
 
-          <section className="bug-detection-section" id="bugs">
-            <BugDetectionPanel />
+          <section
+            className="bug-detection-section"
+            id="bugs"
+          >
+            <BugDetectionPanel
+              selectedProjectPath={projectPath}
+              onProjectPathChange={handleProjectPathInput}
+            />
           </section>
 
           <section className="analysis-grid">
@@ -410,8 +685,8 @@ function App() {
                 <div>
                   <h2>Dependency explorer</h2>
                   <p>
-                    Explore connections, dependency chains, and circular
-                    imports between project files.
+                    Explore connections, dependency chains, and
+                    circular imports between project files.
                   </p>
                 </div>
               </div>
@@ -431,10 +706,15 @@ function App() {
                   type="button"
                   className="secondary-button"
                   onClick={handleDependencies}
-                  disabled={Boolean(loading) || !projectPath.trim()}
+                  disabled={
+                    Boolean(loading) || !projectPath.trim()
+                  }
                 >
                   {loading === "dependencies" ? (
-                    <LoaderCircle className="spin" size={16} />
+                    <LoaderCircle
+                      className="spin"
+                      size={16}
+                    />
                   ) : (
                     <GitBranch size={16} />
                   )}
@@ -468,12 +748,16 @@ function App() {
                 <div>
                   <h2>Change impact</h2>
                   <p>
-                    Estimate which files may be affected by a code change.
+                    Estimate which files may be affected by a
+                    code change.
                   </p>
                 </div>
               </div>
 
-              <label className="field-label" htmlFor="changed-file">
+              <label
+                className="field-label"
+                htmlFor="changed-file"
+              >
                 CHANGED FILE
               </label>
 
@@ -481,23 +765,30 @@ function App() {
                 className="full-input"
                 id="changed-file"
                 value={changedFile}
-                onChange={(event) => setChangedFile(event.target.value)}
+                onChange={(event) =>
+                  setChangedFile(event.target.value)
+                }
                 placeholder="e.g. bug_demo.py"
               />
 
               <p className="input-hint">
-                Use a path relative to the selected project root. You can
-                select a file in the dependency graph above.
+                Use a path relative to the selected project root.
+                You can select a file in the dependency graph above.
               </p>
 
               <button
                 type="button"
                 className="impact-button"
                 onClick={() => handleImpact(changedFile)}
-                disabled={Boolean(loading) || !projectPath.trim()}
+                disabled={
+                  Boolean(loading) || !projectPath.trim()
+                }
               >
                 {loading === "impact" ? (
-                  <LoaderCircle className="spin" size={16} />
+                  <LoaderCircle
+                    className="spin"
+                    size={16}
+                  />
                 ) : (
                   <ShieldCheck size={16} />
                 )}
@@ -531,10 +822,13 @@ function App() {
                     />
                   </div>
 
-                  <div className="risk-level">{riskLabel}</div>
+                  <div className="risk-level">
+                    {riskLabel}
+                  </div>
 
                   <div className="affected-heading">
-                    Potentially affected files ({affectedFiles.length})
+                    Potentially affected files (
+                    {affectedFiles.length})
                   </div>
 
                   {affectedFiles.length > 0 ? (
@@ -560,14 +854,19 @@ function App() {
                     ))
                   ) : (
                     <p className="input-hint">
-                      No affected-file list was returned. Check the
-                      complete response below.
+                      No affected-file list was returned. Check
+                      the complete response below.
                     </p>
                   )}
 
                   <details className="result-details">
-                    <summary>View complete impact report</summary>
-                    <pre>{JSON.stringify(impact, null, 2)}</pre>
+                    <summary>
+                      View complete impact report
+                    </summary>
+
+                    <pre>
+                      {JSON.stringify(impact, null, 2)}
+                    </pre>
                   </details>
                 </div>
               )}
@@ -577,7 +876,8 @@ function App() {
           <footer className="footer">
             <span>
               <Code2 size={15} />
-              RepoMedic <span className="footer-muted">v0.1.0</span>
+              RepoMedic{" "}
+              <span className="footer-muted">v0.2.0</span>
             </span>
 
             <span>

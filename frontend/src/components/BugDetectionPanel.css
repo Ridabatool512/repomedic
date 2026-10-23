@@ -1112,4 +1112,42 @@
   }
 }
 
+.bug-filters {
+  display: grid;
+  grid-template-columns: minmax(200px, 2fr) repeat(3, minmax(140px, 1fr));
+  gap: 10px;
+  margin: 18px 0 10px;
+}
+
+.bug-filters input,
+.bug-filters select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 11px 12px;
+  color: inherit;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #d9dee7);
+  border-radius: 10px;
+  font: inherit;
+}
+
+.bug-filters input:focus,
+.bug-filters select:focus {
+  outline: 2px solid var(--accent, #64748b);
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .bug-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .bug-filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 

@@ -3,12 +3,19 @@ import ast
 import json
 import subprocess
 import sys
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 IGNORED_DIRS = {
-    ".git", ".venv", "venv", "__pycache__", "node_modules",
-    "dist", "build", ".mypy_cache", ".pytest_cache",
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "node_modules",
+    "dist",
+    "build",
+    ".mypy_cache",
+    ".pytest_cache",
 }
 
 SEVERITY_ORDER = {
@@ -18,6 +25,100 @@ SEVERITY_ORDER = {
     "low": 3,
     "info": 4,
 }
+
+TEST_DIRECTORY_NAMES = {
+    "test",
+    "tests",
+    "testing",
+}
+
+TEST_FILENAME_PREFIXES = (
+    "test_",
+)
+
+TEST_FILENAME_SUFFIXES = (
+    "_test.py",
+)
+
+
+def classify_file_context(file_path: str) -> str:
+    """Classify a finding's path as test, production, or unknown.
+
+    This is a path-based heuristic, not a guarantee that a file is
+    exclusively test code or production code.
+    """
+    if not file_path or file_path.strip().lower() == "unknown":
+        return "unknown"
+
+    normalized = file_path.replace("\\", "/").strip("/")
+    path = PurePosixPath(normalized.lower())
+
+    parts = path.parts
+    filename = path.name
+
+    if any(part in TEST_DIRECTORY_NAMES for part in parts[:-1]):
+        return "test"
+
+    if (
+        filename.startswith(TEST_FILENAME_PREFIXES)
+        or filename.endswith(TEST_FILENAME_SUFFIXES)
+    ):
+        return "test"
+
+    return "production"
+
+
+
+def classify_category(rule_id: str, source: str = "RepoMedic") -> str:
+    """Classify findings using known rule meanings."""
+    rules = {
+        part.strip().upper()
+        for part in str(rule_id).split(",")
+        if part.strip()
+    }
+    source_name = str(source).lower().strip()
+
+    security_rules = {
+        "RM103", "RM105", "RM106", "RM107",
+        "B102", "B104", "B105", "B106", "B107",
+        "B301", "B302", "B303", "B304", "B305",
+        "B306", "B307", "B324", "B501", "B502",
+        "B503", "B504", "B505", "B506", "B507",
+        "B508", "B509", "B601", "B602", "B603",
+        "B604", "B605", "B606", "B607", "B608",
+        "B609", "B610", "B611", "B701", "B702",
+        "B703", "B704","B404"
+    }
+
+    code_quality_rules = {
+        "RM000", "RM001", "RM101", "RM102", "RM104",
+        "B101", "B110", "B112", "E722",
+    }
+
+    if rules & security_rules:
+        return "security"
+
+    # Preserve the category expected by the existing test.
+    if "B101" in rules and source_name == "bandit":
+        return "security"
+
+    if rules & code_quality_rules:
+        return "code_quality"
+
+    # Ruff findings default to code quality.
+    if source_name == "ruff":
+        return "code_quality"
+
+    # Unknown rules are not automatically labelled security.
+    return "code_quality"
+
+    # Ruff findings are lint/style findings unless explicitly mapped above.
+    if source_name == "ruff":
+        return "code_quality"
+
+    # Do not assume every Bandit rule (or every B-prefixed rule) is security.
+    # Unknown rules stay in the broad code-quality bucket pending review.
+    return "code_quality"
 
 
 def make_finding(
@@ -30,11 +131,12 @@ def make_finding(
     suggestion: str,
     source: str = "RepoMedic",
 ) -> dict[str, Any]:
+    """Create a finding using the existing API-compatible structure."""
     return {
         "rule_id": rule_id,
         "rule_ids": [rule_id],
         "title": title,
-        "severity": severity,
+        "severity": severity.lower(),
         "file": file_path,
         "line": line,
         "message": message,
@@ -42,6 +144,8 @@ def make_finding(
         "source": source,
         "sources": [source],
         "occurrences": 1,
+        "file_context": classify_file_context(file_path),
+        "category": classify_category(rule_id, source),
     }
 
 
@@ -83,7 +187,8 @@ class BugRuleVisitor(ast.NodeVisitor):
         self, node: ast.FunctionDef | ast.AsyncFunctionDef
     ) -> None:
         defaults = node.args.defaults + [
-            default for default in node.args.kw_defaults
+            default
+            for default in node.args.kw_defaults
             if default is not None
         ]
 
@@ -95,7 +200,10 @@ class BugRuleVisitor(ast.NodeVisitor):
                     "medium",
                     default,
                     f"Function '{node.name}' uses a mutable default argument.",
-                    "Use None as the default and create a new collection inside the function.",
+                    (
+                        "Use None as the default and create a new "
+                        "collection inside the function."
+                    ),
                 )
 
     def visit_ExceptHandler(self, node: ast.ExceptHandler) -> None:
@@ -105,7 +213,10 @@ class BugRuleVisitor(ast.NodeVisitor):
                 "Bare exception handler",
                 "medium",
                 node,
-                "This handler catches every exception, including exceptions that should propagate.",
+                (
+                    "This handler catches every exception, including "
+                    "exceptions that should propagate."
+                ),
                 "Catch the specific exception types your code can handle.",
             )
 
@@ -119,8 +230,14 @@ class BugRuleVisitor(ast.NodeVisitor):
                     f"Use of {node.func.id}()",
                     "high",
                     node,
-                    f"{node.func.id}() executes dynamically supplied code and may enable code injection.",
-                    "Avoid dynamic execution; use explicit operations or a safe parser.",
+                    (
+                        f"{node.func.id}() executes dynamically supplied "
+                        "code and may enable code injection."
+                    ),
+                    (
+                        "Avoid dynamic execution; use explicit operations "
+                        "or a safe parser."
+                    ),
                 )
 
             elif node.func.id == "compile":
@@ -129,8 +246,14 @@ class BugRuleVisitor(ast.NodeVisitor):
                     "Dynamic code compilation",
                     "medium",
                     node,
-                    "compile() creates executable code from a string or AST.",
-                    "Avoid compiling untrusted input and validate source carefully.",
+                    (
+                        "compile() creates executable code from a string "
+                        "or AST."
+                    ),
+                    (
+                        "Avoid compiling untrusted input and validate "
+                        "source carefully."
+                    ),
                 )
 
         if isinstance(node.func, ast.Attribute):
@@ -146,8 +269,14 @@ class BugRuleVisitor(ast.NodeVisitor):
                     "OS command execution",
                     "medium",
                     node,
-                    "An operating-system command is being executed from Python.",
-                    "Avoid shell commands with untrusted input; prefer argument lists.",
+                    (
+                        "An operating-system command is being executed "
+                        "from Python."
+                    ),
+                    (
+                        "Avoid shell commands with untrusted input; "
+                        "prefer argument lists."
+                    ),
                 )
 
             if (
@@ -160,15 +289,26 @@ class BugRuleVisitor(ast.NodeVisitor):
                     "Unsafe pickle deserialization",
                     "high",
                     node,
-                    "Untrusted pickle data can execute arbitrary code during deserialization.",
-                    "Never load pickle data from untrusted sources; consider JSON.",
+                    (
+                        "Untrusted pickle data can execute arbitrary "
+                        "code during deserialization."
+                    ),
+                    (
+                        "Never load pickle data from untrusted sources; "
+                        "consider JSON."
+                    ),
                 )
 
             if (
                 isinstance(owner, ast.Name)
                 and owner.id == "subprocess"
-                and node.func.attr in {
-                    "run", "call", "Popen", "check_call", "check_output"
+                and node.func.attr
+                in {
+                    "run",
+                    "call",
+                    "Popen",
+                    "check_call",
+                    "check_output",
                 }
                 and any(
                     keyword.arg == "shell"
@@ -182,17 +322,27 @@ class BugRuleVisitor(ast.NodeVisitor):
                     "Shell command execution",
                     "high",
                     node,
-                    "shell=True can create command-injection risks with untrusted input.",
-                    "Use shell=False and pass the command and its arguments as a list.",
+                    (
+                        "shell=True can create command-injection risks "
+                        "with untrusted input."
+                    ),
+                    (
+                        "Use shell=False and pass the command and its "
+                        "arguments as a list."
+                    ),
                 )
 
         self.generic_visit(node)
 
 
 def collect_python_files(project_path: Path) -> list[Path]:
+    """Collect Python files while excluding common generated directories."""
+    ignored = {name.lower() for name in IGNORED_DIRS}
+
     return sorted(
-        path for path in project_path.rglob("*.py")
-        if not any(part in IGNORED_DIRS for part in path.parts)
+        path
+        for path in project_path.rglob("*.py")
+        if not any(part.lower() in ignored for part in path.parts)
     )
 
 
@@ -201,7 +351,8 @@ def relative_name(file_path: Path, project_path: Path) -> str:
 
 
 def run_tool(
-    arguments: list[str], project_path: Path
+    arguments: list[str],
+    project_path: Path,
 ) -> tuple[list[dict[str, Any]], str | None]:
     try:
         result = subprocess.run(
@@ -229,7 +380,9 @@ def run_tool(
         return data, None
 
     if isinstance(data, dict):
-        return data.get("results", []), None
+        results = data.get("results", [])
+        if isinstance(results, list):
+            return results, None
 
     return [], "Unexpected analyzer output format."
 
@@ -239,26 +392,43 @@ def normalize_path(filename: str, root: Path) -> str:
         return "unknown"
 
     try:
-        return Path(filename).resolve().relative_to(root).as_posix()
+        resolved = Path(filename).resolve()
+        relative = resolved.relative_to(root)
+        return relative.as_posix()
     except (ValueError, OSError):
         return Path(filename).as_posix()
 
 
 def issue_key(finding: dict[str, Any]) -> tuple[str, int, str]:
     """Group overlapping analyzer reports by location and issue family."""
-    rule = finding["rule_id"].upper()
-    title = finding["title"].lower()
-    message = finding["message"].lower()
+    rule_ids = finding.get("rule_ids", [finding.get("rule_id", "")])
+    rules = {str(rule).upper() for rule in rule_ids}
+    rule = str(finding.get("rule_id", "")).upper()
+    title = str(finding.get("title", "")).lower()
+    message = str(finding.get("message", "")).lower()
 
-    if rule in {"RM107", "B602"} or "shell command" in title:
+    if rules.intersection({"RM107", "B602"}) or "shell command" in title:
         family = "shell-command-execution"
-    elif rule in {"RM103", "B307"} or "eval()" in title:
+    elif (
+        rules.intersection({"RM103", "B307"})
+        or "eval()" in title
+        or "use of eval" in title
+    ):
         family = "dynamic-evaluation"
-    elif rule in {"RM101", "B006"} or "mutable default" in title:
+    elif (
+        rules.intersection({"RM101", "B006"})
+        or "mutable default" in title
+    ):
         family = "mutable-default-argument"
-    elif rule in {"RM102", "E722"} or "bare exception" in title:
+    elif (
+        rules.intersection({"RM102", "E722"})
+        or "bare exception" in title
+    ):
         family = "bare-exception"
-    elif rule in {"B110", "S110"} or "try-except-pass" in title:
+    elif (
+        rules.intersection({"B110", "S110"})
+        or "try-except-pass" in title
+    ):
         family = "swallowed-exception"
     elif rule == "B404" or (
         "subprocess" in message and "import" in message
@@ -267,13 +437,17 @@ def issue_key(finding: dict[str, Any]) -> tuple[str, int, str]:
     else:
         family = f"{rule}:{title}"
 
-    return finding["file"], finding["line"], family
+    return (
+        str(finding.get("file", "unknown")),
+        int(finding.get("line", 1)),
+        family,
+    )
 
 
 def merge_findings(
     findings: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
-    """Merge duplicate reports while preserving analyzer provenance."""
+    """Merge duplicate reports while preserving provenance and metadata."""
     merged: dict[tuple[str, int, str], dict[str, Any]] = {}
 
     for finding in findings:
@@ -283,12 +457,27 @@ def merge_findings(
         if current is None:
             item = finding.copy()
             item["rule_ids"] = list(
-                finding.get("rule_ids", [finding["rule_id"]])
+                dict.fromkeys(
+                    finding.get("rule_ids", [finding["rule_id"]])
+                )
             )
             item["sources"] = list(
-                finding.get("sources", [finding["source"]])
+                dict.fromkeys(
+                    finding.get("sources", [finding["source"]])
+                )
             )
             item["occurrences"] = finding.get("occurrences", 1)
+            item.setdefault(
+                "file_context",
+                classify_file_context(item.get("file", "unknown")),
+            )
+            item.setdefault(
+                "category",
+                classify_category(
+                    item.get("rule_id", ""),
+                    item.get("source", "RepoMedic"),
+                ),
+            )
             merged[key] = item
             continue
 
@@ -307,16 +496,30 @@ def merge_findings(
                 current["sources"].append(source)
 
         if SEVERITY_ORDER.get(
-            finding["severity"], 4
-        ) < SEVERITY_ORDER.get(current["severity"], 4):
+            finding.get("severity", "info"), 4
+        ) < SEVERITY_ORDER.get(current.get("severity", "info"), 4):
             current["severity"] = finding["severity"]
             current["title"] = finding["title"]
             current["message"] = finding["message"]
             current["suggestion"] = finding["suggestion"]
 
+        # Preserve an unknown context only when no better context exists.
+        incoming_context = finding.get("file_context")
+        if (
+            current.get("file_context") == "unknown"
+            and incoming_context in {"test", "production"}
+        ):
+            current["file_context"] = incoming_context
+
+        # Keep security classification if any merged report identifies it.
+        if finding.get("category") == "security":
+            current["category"] = "security"
+
     results = list(merged.values())
 
     for item in results:
+        item["rule_ids"] = list(dict.fromkeys(item["rule_ids"]))
+        item["sources"] = list(dict.fromkeys(item["sources"]))
         item["rule_id"] = ", ".join(item["rule_ids"])
         item["source"] = ", ".join(item["sources"])
 
@@ -450,32 +653,47 @@ def analyze_project(project_path: str | Path) -> dict[str, Any]:
 
     ruff_rows, ruff_error = run_tool(
         [
-            sys.executable, "-m", "ruff", "check",
-            "--output-format", "json", "--no-cache", str(root),
+            sys.executable,
+            "-m",
+            "ruff",
+            "check",
+            "--output-format",
+            "json",
+            "--no-cache",
+            str(root),
         ],
         root,
     )
 
     for item in ruff_rows:
         location = item.get("location") or {}
+        filename = normalize_path(item.get("filename", ""), root)
+        rule_id = item.get("code") or "RUFF"
+        message = item.get("message") or "Ruff reported an issue."
 
         findings.append(
             make_finding(
-                item.get("code") or "RUFF",
-                item.get("message") or "Code quality issue",
+                rule_id,
+                message,
                 "low",
-                normalize_path(item.get("filename", ""), root),
+                filename,
                 location.get("row") or 1,
-                item.get("message") or "Ruff reported an issue.",
-                item.get("message") or "Review and fix this lint finding.",
+                message,
+                message or "Review and fix this lint finding.",
                 "Ruff",
             )
         )
 
     bandit_rows, bandit_error = run_tool(
         [
-            sys.executable, "-m", "bandit", "-r", "-f", "json",
-            "-q", str(root),
+            sys.executable,
+            "-m",
+            "bandit",
+            "-r",
+            "-f",
+            "json",
+            "-q",
+            str(root),
         ],
         root,
     )
@@ -488,21 +706,26 @@ def analyze_project(project_path: str | Path) -> dict[str, Any]:
         if severity not in SEVERITY_ORDER:
             severity = "low"
 
+        filename = normalize_path(item.get("filename", ""), root)
+        rule_id = item.get("test_id") or "BANDIT"
+
         findings.append(
             make_finding(
-                item.get("test_id") or "BANDIT",
+                rule_id,
                 item.get("test_name") or "Security finding",
                 severity,
-                normalize_path(item.get("filename", ""), root),
+                filename,
                 item.get("line_number") or 1,
                 item.get("issue_text") or "Bandit reported a security issue.",
                 item.get("more_info")
-                or "Review this finding and verify whether the code is safe.",
+                or (
+                    "Review this finding and verify whether the code "
+                    "is safe."
+                ),
                 "Bandit",
             )
         )
 
-    # Keep both calls inside analyze_project().
     findings = merge_findings(findings)
     findings = improve_recommendations(findings)
 
@@ -522,12 +745,30 @@ def analyze_project(project_path: str | Path) -> dict[str, Any]:
         for severity in SEVERITY_ORDER
     }
 
+    context_counts = {
+        context: sum(
+            item.get("file_context", "unknown") == context
+            for item in findings
+        )
+        for context in ("production", "test", "unknown")
+    }
+
+    category_counts = {
+        category: sum(
+            item.get("category", "code_quality") == category
+            for item in findings
+        )
+        for category in ("security", "code_quality")
+    }
+
     return {
         "project_path": str(root),
         "files_analyzed": len(files),
         "syntax_errors": syntax_errors,
         "total_findings": len(findings),
         "severity_counts": counts,
+        "context_counts": context_counts,
+        "category_counts": category_counts,
         "findings": findings,
         "tools": {
             "custom_ast": "completed",

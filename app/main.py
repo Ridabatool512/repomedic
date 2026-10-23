@@ -20,15 +20,16 @@ from app.analyzers.patch_manager import (
 from app.analyzers.patch_validator import validate_patch_candidate
 from app.analyzers.project_scanner import save_report, scan_project
 from app.analyzers.safe_patches import generate_safe_patch
+from app.github_importer import import_public_repository
 
 
 app = FastAPI(
     title="RepoMedic API",
     description=(
         "Codebase intelligence, dependency analysis, "
-        "and change-impact assessment."
+        "change-impact assessment, and GitHub repository importing."
     ),
-    version="0.1.0",
+    version="0.2.0",
 )
 
 app.add_middleware(
@@ -129,6 +130,10 @@ class PatchHistoryRequest(BaseModel):
     project_path: str = Field(min_length=1)
 
 
+class GitHubImportRequest(BaseModel):
+    repository_url: str = Field(min_length=1, max_length=500)
+
+
 # --------------------------------------------------
 # Basic endpoints
 # --------------------------------------------------
@@ -137,7 +142,7 @@ class PatchHistoryRequest(BaseModel):
 def root():
     return {
         "name": "RepoMedic API",
-        "version": "0.1.0",
+        "version": app.version,
         "status": "running",
         "docs": "/docs",
     }
@@ -146,6 +151,15 @@ def root():
 @app.get("/health")
 def health():
     return {"status": "healthy"}
+
+
+# --------------------------------------------------
+# GitHub repository importing
+# --------------------------------------------------
+
+@app.post("/api/github/import")
+def import_github_repository(request: GitHubImportRequest):
+    return import_public_repository(request.repository_url)
 
 
 # --------------------------------------------------

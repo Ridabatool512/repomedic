@@ -227,3 +227,83 @@ pre { max-height: 260px; overflow: auto; margin: 12px 0 0; padding: 12px; color:
   .result-row { align-items: flex-start; flex-direction: column; }
   .footer { flex-direction: column; }
 }
+
+.github-import-section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.github-import-heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.github-import-heading > svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: #b8a6ff;
+}
+
+.github-import-heading h3 {
+  margin: 0 0 5px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.github-import-heading p {
+  margin: 0;
+  color: var(--text-muted, #a6a3b8);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.imported-repositories {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.imported-repositories > strong {
+  font-size: 13px;
+  color: var(--text-muted, #a6a3b8);
+}
+
+.imported-repositories .file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.imported-repositories .file-row > span {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.text-button {
+  flex-shrink: 0;
+  border: 0;
+  background: transparent;
+  color: #b8a6ff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+}
+
+.text-button:hover {
+  color: #ddd4ff;
+  text-decoration: underline;
+}
+
+.text-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+#project-selector {
+  margin-bottom: 20px;
+}

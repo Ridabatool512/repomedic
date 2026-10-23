@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   AlertTriangle,
   Bug,
@@ -327,6 +327,8 @@ function PatchManagementPanel({
   const [busy, setBusy] = useState(false);
   const [approved, setApproved] = useState(false);
 
+
+
   const patchReady = Boolean(
     patch?.patch_available &&
       patch?.file &&
@@ -412,7 +414,6 @@ function PatchManagementPanel({
       setPreview(null);
       setApproved(false);
 
-      // Refresh patch history after a successful application.
       await onPatchHistoryChange();
     } catch (err) {
       setError(getErrorMessage(err, "Could not apply the patch."));
@@ -442,7 +443,6 @@ function PatchManagementPanel({
       setPreview(null);
       setApproved(false);
 
-      // Refresh history after a successful rollback.
       await onPatchHistoryChange();
     } catch (err) {
       setError(getErrorMessage(err, "Rollback failed."));
@@ -689,12 +689,24 @@ function PatchManagementPanel({
   );
 }
 
-export default function BugDetectionPanel() {
-  const [projectPath, setProjectPath] = useState(DEFAULT_PROJECT);
+export default function BugDetectionPanel({
+  selectedProjectPath,
+  onProjectPathChange,
+}) {
+  const [internalProjectPath, setInternalProjectPath] =
+    useState(DEFAULT_PROJECT);
+
+  const projectPath = selectedProjectPath ?? internalProjectPath;
+
   const [report, setReport] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [historyRefreshKey, setHistoryRefreshKey] = useState(0);
+
+  const [severityFilter, setSeverityFilter] = useState("all");
+  const [contextFilter, setContextFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [findingSearch, setFindingSearch] = useState("");
 
   const [recommendations, setRecommendations] = useState({});
   const [recommendationErrors, setRecommendationErrors] = useState({});
@@ -708,11 +720,42 @@ export default function BugDetectionPanel() {
   const [validationErrors, setValidationErrors] = useState({});
   const [validationLoading, setValidationLoading] = useState({});
 
+  useEffect(() => {
+    setReport(null);
+    setError("");
+    setRecommendations({});
+    setRecommendationErrors({});
+    setRecommendationLoading({});
+    setSafePatches({});
+    setSafePatchErrors({});
+    setSafePatchLoading({});
+    setValidationResults({});
+    setValidationErrors({});
+    setValidationLoading({});
+    setSeverityFilter("all");
+    setContextFilter("all");
+    setCategoryFilter("all");
+    setFindingSearch("");
+  }, [projectPath]);
+
   const refreshPatchHistory = useCallback(async () => {
     setHistoryRefreshKey((current) => current + 1);
   }, []);
 
+  function handleProjectPathChange(value) {
+    if (onProjectPathChange) {
+      onProjectPathChange(value);
+    } else {
+      setInternalProjectPath(value);
+    }
+  }
+
   async function handleDetect() {
+    if (!projectPath.trim()) {
+      setError("Enter a project folder path first.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setReport(null);
@@ -867,6 +910,36 @@ export default function BugDetectionPanel() {
 
   const counts = report?.severity_counts ?? {};
   const findings = report?.findings ?? [];
+  const contextCounts = report?.context_counts ?? {};
+  const categoryCounts = report?.category_counts ?? {};
+
+  const filteredFindings = findings.filter((finding) => {
+    const severity = String(finding.severity ?? "info").toLowerCase();
+    const context = finding.file_context ?? "unknown";
+    const category = finding.category ?? "unknown";
+
+    const searchText = [
+      finding.title,
+      finding.message,
+      finding.description,
+      finding.rule_id,
+      finding.rule,
+      finding.file,
+      finding.path,
+      finding.suggestion,
+      finding.recommendation,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    return (
+      (severityFilter === "all" || severity === severityFilter) &&
+      (contextFilter === "all" || context === contextFilter) &&
+      (categoryFilter === "all" || category === categoryFilter) &&
+      searchText.includes(findingSearch.trim().toLowerCase())
+    );
+  });
 
   return (
     <section className="bug-panel" id="bug-detection">
@@ -892,7 +965,7 @@ export default function BugDetectionPanel() {
         <input
           id="bug-project-path"
           value={projectPath}
-          onChange={(event) => setProjectPath(event.target.value)}
+          onChange={(event) => handleProjectPathChange(event.target.value)}
           placeholder="Absolute path to your project folder"
         />
 
@@ -942,10 +1015,40 @@ export default function BugDetectionPanel() {
           <h3 className="bug-subheading">Severity breakdown</h3>
 
           <div className="bug-severity-grid">
+            <SeverityCard label="Critical" count={counts.critical} />
             <SeverityCard label="High" count={counts.high} />
             <SeverityCard label="Medium" count={counts.medium} />
             <SeverityCard label="Low" count={counts.low} />
           </div>
+
+          <h3 className="bug-subheading">Finding context</h3>
+
+          <div className="bug-summary-grid">
+            <div className="bug-summary-card">
+              <span>Production files</span>
+              <strong>{contextCounts.production ?? 0}</strong>
+            </div>
+
+            <div className="bug-summary-card">
+              <span>Test files</span>
+              <strong>{contextCounts.test ?? 0}</strong>
+            </div>
+
+            <div className="bug-summary-card">
+              <span>Security category</span>
+              <strong>{categoryCounts.security ?? 0}</strong>
+            </div>
+
+            <div className="bug-summary-card">
+              <span>Code quality</span>
+              <strong>{categoryCounts.code_quality ?? 0}</strong>
+            </div>
+          </div>
+
+          <p className="bug-muted">
+            Categories are broad rule classifications, not confirmed
+            vulnerability counts. Review each finding in context.
+          </p>
 
           <div className="bug-findings-heading">
             <div>
@@ -956,8 +1059,57 @@ export default function BugDetectionPanel() {
               </p>
             </div>
 
-            <span className="bug-findings-count">{findings.length}</span>
+            <span className="bug-findings-count">{filteredFindings.length}</span>
           </div>
+
+          <div className="bug-filters">
+            <input
+              type="search"
+              value={findingSearch}
+              onChange={(event) => setFindingSearch(event.target.value)}
+              placeholder="Search rules, messages, or files..."
+              aria-label="Search findings"
+            />
+
+            <select
+              value={severityFilter}
+              onChange={(event) => setSeverityFilter(event.target.value)}
+              aria-label="Filter by severity"
+            >
+              <option value="all">All severities</option>
+              <option value="critical">Critical</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+              <option value="info">Info</option>
+            </select>
+
+            <select
+              value={contextFilter}
+              onChange={(event) => setContextFilter(event.target.value)}
+              aria-label="Filter by file context"
+            >
+              <option value="all">All file contexts</option>
+              <option value="production">Production</option>
+              <option value="test">Tests</option>
+              <option value="unknown">Unknown context</option>
+            </select>
+
+            <select
+              value={categoryFilter}
+              onChange={(event) => setCategoryFilter(event.target.value)}
+              aria-label="Filter by category"
+            >
+              <option value="all">All categories</option>
+              <option value="security">Security</option>
+              <option value="code_quality">Code quality</option>
+              <option value="unknown">Unknown category</option>
+            </select>
+          </div>
+
+          <p className="bug-muted">
+            Showing {filteredFindings.length} of {findings.length} findings.
+          </p>
 
           {findings.length === 0 ? (
             <div className="bug-empty">
@@ -965,10 +1117,16 @@ export default function BugDetectionPanel() {
               <strong>No findings reported</strong>
               <p>No issues were detected by the configured analyzers.</p>
             </div>
+          ) : filteredFindings.length === 0 ? (
+            <div className="bug-empty">
+              <CheckCircle2 size={22} />
+              <strong>No matching findings</strong>
+              <p>Try changing the filters or search text.</p>
+            </div>
           ) : (
             <div className="bug-findings-list">
-              {findings.map((finding, index) => {
-                const severity = (
+              {filteredFindings.map((finding, index) => {
+                const severity = String(
                   finding.severity ?? "info"
                 ).toLowerCase();
 
@@ -1020,6 +1178,14 @@ export default function BugDetectionPanel() {
                           {finding.line != null && (
                             <span>Line: {finding.line}</span>
                           )}
+
+                          <span>
+                            Context: {finding.file_context ?? "unknown"}
+                          </span>
+
+                          <span>
+                            Category: {finding.category ?? "unknown"}
+                          </span>
                         </span>
                       </span>
                     </summary>
@@ -1061,9 +1227,7 @@ export default function BugDetectionPanel() {
                       {recommendationErrors[findingKey] && (
                         <div className="bug-message bug-error">
                           <AlertTriangle size={17} />
-                          <span>
-                            {recommendationErrors[findingKey]}
-                          </span>
+                          <span>{recommendationErrors[findingKey]}</span>
                         </div>
                       )}
 
@@ -1112,6 +1276,7 @@ export default function BugDetectionPanel() {
                       />
 
                       <PatchManagementPanel
+                        key={`${projectPath.trim()}-${findingKey}`}
                         projectPath={projectPath.trim()}
                         patch={safePatches[findingKey]}
                         validation={validationResults[findingKey]}
