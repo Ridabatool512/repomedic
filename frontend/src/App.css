@@ -677,3 +677,47 @@ h1, h2, h3, h4, h5, strong { color: inherit; }
   .hero-desktop-break { display: none; }
   .hero h1 { font-size: 29px; }
 }
+
+
+/* Small, restrained animated code signal in the hero */
+.hero-side-note {
+  position: relative;
+  overflow: hidden;
+}
+.hero-side-note::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18px;
+  width: 3px;
+  height: 20px;
+  border-radius: 3px;
+  background: #f07a88;
+  animation: hero-signal 3.8s ease-in-out infinite;
+}
+.hero-side-note strong span {
+  display: inline-block;
+  animation: hero-arrow-pulse 2.4s ease-in-out infinite;
+}
+.hero-live-dot {
+  animation: hero-dot-pulse 2.8s ease-in-out infinite;
+}
+@keyframes hero-signal {
+  0%, 100% { transform: translateY(0); opacity: .45; }
+  50% { transform: translateY(34px); opacity: 1; }
+}
+@keyframes hero-arrow-pulse {
+  0%, 100% { transform: translateX(0); opacity: .65; }
+  50% { transform: translateX(3px); opacity: 1; }
+}
+@keyframes hero-dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px #e65b6c1c; }
+  50% { box-shadow: 0 0 0 5px #e65b6c12; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-side-note::after,
+  .hero-side-note strong span,
+  .hero-live-dot {
+    animation: none !important;
+  }
+}
