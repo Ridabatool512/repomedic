@@ -348,7 +348,7 @@ function App() {
           <div className="sidebar-note">
             <Sparkles size={16} />
             <span>
-              A closer look at what your code is doing.
+              Tools for your project
             </span>
           </div>
         </div>
@@ -371,18 +371,15 @@ function App() {
             <div className="hero-copy">
               <div className="eyebrow">
                 <span className="hero-live-dot" />
-                YOUR CODE, AT A GLANCE
+                REPO OVERVIEW
               </div>
 
               <h1>
-                See what depends on
-                <span>the code you change.</span>
+                Check your code
               </h1>
 
               <p>
-                Inspect Python files, trace dependencies, and check the
-                likely impact before you commit. Start with a local project
-                or bring in a public GitHub repository below.
+                Scan Python files, check imports, and see which files may be affected by a change.
               </p>
               <div className="hero-meta">
                 <span><Code2 size={14} /> Python files</span>
@@ -429,9 +426,9 @@ function App() {
               </div>
 
               <div>
-                <h2>Choose a project</h2>
+                <h2>Select a project</h2>
                 <p>
-                  Pick the demo project or import a public repository from GitHub.
+                  Choose the demo project or import a GitHub repository.
                 </p>
               </div>
             </div>
@@ -470,7 +467,7 @@ function App() {
               className="field-label"
               htmlFor="project-path"
             >
-              FOLDER PATH
+              PROJECT FOLDER
             </label>
 
             <div className="project-input-row">
@@ -515,9 +512,9 @@ function App() {
                 <GitBranch size={20} />
 
                 <div>
-                  <h3>Bring in a GitHub repo</h3>
+                  <h3>Import from GitHub</h3>
                   <p>
-                    Paste a public repository link to work with its code here.
+                    Enter a public repository link.
                   </p>
                 </div>
               </div>
@@ -526,7 +523,7 @@ function App() {
                 className="field-label"
                 htmlFor="github-repository-url"
               >
-                REPOSITORY LINK
+                GITHUB URL
               </label>
 
               <div className="project-input-row">
@@ -622,8 +619,8 @@ function App() {
 
           <div className="section-title-row">
             <div>
-              <h2>Project overview</h2>
-              <p>Insights from your latest scan</p>
+              <h2>Overview</h2>
+              <p>Results from your last scan</p>
             </div>
 
             <span
@@ -694,10 +691,9 @@ function App() {
                 </div>
 
                 <div>
-                  <h2>Dependency explorer</h2>
+                  <h2>File dependencies</h2>
                   <p>
-                    Explore connections, dependency chains, and
-                    circular imports between project files.
+                    See which files import other files and check for circular imports.
                   </p>
                 </div>
               </div>
@@ -709,7 +705,7 @@ function App() {
                   </span>
 
                   <span className="result-label">
-                    Detected connections
+                    Connections
                   </span>
                 </div>
 
