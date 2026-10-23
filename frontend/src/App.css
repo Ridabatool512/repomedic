@@ -794,3 +794,64 @@ h1, h2, h3, h4, h5, strong { color: inherit; }
 @media (prefers-reduced-motion: reduce) {
   .dependency-line, .mini-file, .hero-scan-bar i, .hero-ellipsis { animation: none !important; }
 }
+
+
+/* Subtle muted-red borders for stronger contrast on the existing dark theme */
+:root {
+  --accent-border: rgba(225, 29, 63, 0.42);
+  --accent-border-soft: rgba(225, 29, 63, 0.24);
+}
+
+/* Give primary content surfaces a quiet red edge without making every card loud */
+.project-panel,
+.panel,
+.stat-card,
+.hero,
+.hero-visual {
+  border-color: var(--accent-border-soft) !important;
+}
+
+.project-panel:hover,
+.panel:hover,
+.stat-card:hover,
+.hero-visual:hover {
+  border-color: var(--accent-border) !important;
+}
+
+/* Red edge on interactive fields, with a clearer focus state */
+.project-input-row input,
+.full-input,
+input,
+select,
+textarea {
+  border-color: rgba(225, 29, 63, 0.32) !important;
+}
+
+.project-input-row input:hover,
+.full-input:hover,
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: rgba(225, 29, 63, 0.58) !important;
+}
+
+.project-input-row input:focus,
+.full-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #e11d3f !important;
+  box-shadow: 0 0 0 3px rgba(225, 29, 63, 0.12) !important;
+}
+
+/* Keep secondary controls and navigation consistent with the red accent */
+.secondary-button,
+.scan-badge,
+.api-status,
+.topbar-badge {
+  border-color: rgba(225, 29, 63, 0.28) !important;
+}
+
+.nav-link.active {
+  border-color: rgba(225, 29, 63, 0.5) !important;
+}
