@@ -855,3 +855,66 @@ textarea:focus {
 .nav-link.active {
   border-color: rgba(225, 29, 63, 0.5) !important;
 }
+
+
+/* Stronger red borders: clearly visible, still restrained */
+.project-panel,
+.panel,
+.stat-card,
+.hero,
+.hero-visual,
+.card,
+.section-card,
+.analysis-card,
+.result-card,
+.workspace-card {
+  border: 1.5px solid #762331 !important;
+}
+
+.project-panel:hover,
+.panel:hover,
+.stat-card:hover,
+.hero-visual:hover,
+.card:hover,
+.section-card:hover,
+.analysis-card:hover,
+.result-card:hover,
+.workspace-card:hover {
+  border-color: #c1122f !important;
+}
+
+.project-input-row input,
+.full-input,
+input,
+select,
+textarea {
+  border: 1.5px solid #853040 !important;
+}
+
+.project-input-row input:hover,
+.full-input:hover,
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: #c1122f !important;
+}
+
+.project-input-row input:focus,
+.full-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border: 1.5px solid #ef334f !important;
+  box-shadow: 0 0 0 3px rgba(225, 29, 63, 0.18) !important;
+}
+
+.secondary-button,
+.scan-badge,
+.api-status,
+.topbar-badge {
+  border: 1.5px solid #762331 !important;
+}
+
+.nav-link.active {
+  border: 1.5px solid #c1122f !important;
+}
