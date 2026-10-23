@@ -30,3 +30,15 @@ input:focus-visible {
   outline: 2px solid #a99aff;
   outline-offset: 3px;
 }
+
+
+/* Red, white, and black theme foundations */
+:root { color-scheme: dark; }
+html { background: #080808; }
+body { color: #f7f7f8; background: #080808; }
+::selection { color: #fff; background: #c1122f; }
+button:focus-visible, a:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible {
+  outline: 2px solid #ff5268;
+  outline-offset: 3px;
+}
