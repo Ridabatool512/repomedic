@@ -177,7 +177,7 @@ export default function PatchHistory({
           </div>
 
           <div>
-            <h2>Patch History</h2>
+            <h2>Patch history</h2>
             <p>See earlier patches or restore a saved backup.</p>
           </div>
         </div>
@@ -246,7 +246,7 @@ export default function PatchHistory({
           <History size={30} />
           <strong>No patches yet</strong>
           <p>
-            Patch records will show up here after you apply a patch.
+            Applied patches will appear here.
           </p>
         </div>
       ) : (
