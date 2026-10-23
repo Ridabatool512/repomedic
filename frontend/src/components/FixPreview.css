@@ -325,3 +325,104 @@
     font-size: 11px;
   }
 }
+
+
+/* RepoMedic red / white / black theme: improve fix-preview contrast */
+.fix-preview-trigger,
+.fix-copy-button {
+  background: #171717;
+  color: #ffffff;
+  border-color: #454545;
+}
+.fix-preview-trigger:hover,
+.fix-copy-button:hover {
+  background: #2a1114;
+  color: #ffffff;
+  border-color: #ef4444;
+}
+.fix-preview-result,
+.fix-code-panel {
+  background: #111111;
+  color: #f5f5f5;
+  border-color: #3f3f46;
+}
+.fix-preview-eyebrow,
+.fix-preview-header > div > p,
+.fix-preview-note,
+.fix-preview-footer,
+.fix-code-label {
+  color: #d4d4d8;
+}
+.fix-preview-header h3,
+.fix-code-panel-title,
+.fix-risk-badge,
+.fix-preview-guidance {
+  color: #fafafa;
+}
+.fix-risk-badge {
+  background: #202020;
+  border-color: #52525b;
+}
+.fix-code-panel-heading,
+.fix-code-panel.proposed .fix-code-panel-heading {
+  background: #1c1c1c;
+  border-bottom-color: #3f3f46;
+}
+.fix-code {
+  background: #090909;
+  color: #f8fafc;
+}
+.fix-code-line.target {
+  background: #3b2710;
+}
+.fix-line-number {
+  color: #a1a1aa;
+}
+.fix-code-proposed {
+  background: #171717;
+  color: #ffffff;
+  border-left: 3px solid #ef4444;
+}
+.fix-code-proposed code,
+.fix-code-line code {
+  color: inherit;
+}
+.fix-preview-notice {
+  background: #2b1d0b;
+  border-color: #a16207;
+  color: #fef3c7;
+}
+.fix-preview-guidance strong {
+  color: #fca5a5;
+}
+.fix-preview-guidance p {
+  color: #e4e4e7;
+}
+.fix-preview-footer {
+  border-top-color: #3f3f46;
+}
+.fix-preview-footer svg {
+  color: #f87171;
+}
+.fix-risk-badge.high {
+  background: #3b1111;
+  border-color: #b91c1c;
+  color: #fecaca;
+}
+.fix-risk-badge.medium {
+  background: #3b2a0c;
+  border-color: #a16207;
+  color: #fde68a;
+}
+.fix-risk-badge.low {
+  background: #102b1a;
+  border-color: #15803d;
+  color: #bbf7d0;
+}
+.fix-preview-error {
+  color: #fca5a5;
+}
+.fix-preview button:focus-visible {
+  outline: 2px solid #f87171;
+  outline-offset: 3px;
+}
