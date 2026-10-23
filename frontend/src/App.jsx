@@ -74,7 +74,7 @@ function getErrorMessage(error) {
     return "Could not connect to the RepoMedic API. Make sure the backend is running at http://127.0.0.1:8000.";
   }
 
-  return error?.message || "Something went wrong. Please try again.";
+  return error?.message || "Something went wrong. Try again.";
 }
 
 function StatCard({ icon: Icon, label, value, detail }) {
@@ -123,7 +123,7 @@ function App() {
     resetAnalysis();
     setError("");
     setNotice(
-      "Project selected. Run a scan to analyze this codebase."
+      "Project selected. Run a scan when you're ready."
     );
   }
 
@@ -211,7 +211,7 @@ function App() {
       setImpact(null);
       setChangedFile("");
 
-      setNotice("Project scan completed successfully.");
+      setNotice("Scan finished.");
     });
   }
 
@@ -228,7 +228,7 @@ function App() {
 
       setDependencies(result);
       setNotice(
-        "Dependency analysis completed successfully."
+        "Dependency check finished."
       );
     });
   }
@@ -256,7 +256,7 @@ function App() {
 
       setImpact(result);
       setNotice(
-        `Change-impact analysis completed for ${file}.`
+        `Checked what may be affected by ${file}.`
       );
     });
   }
@@ -323,7 +323,7 @@ function App() {
 
         <a className="nav-link" href="#bugs">
           <AlertTriangle size={18} />
-          Smart Bug Detection
+          Find bugs
         </a>
 
         <a className="nav-link" href="#dependencies">
@@ -333,7 +333,7 @@ function App() {
 
         <a className="nav-link" href="#impact">
           <ShieldCheck size={18} />
-          Change impact
+          Change effects
         </a>
 
         <div className="sidebar-bottom">
@@ -348,7 +348,7 @@ function App() {
           <div className="sidebar-note">
             <Sparkles size={16} />
             <span>
-              Understand your codebase with confidence.
+              A closer look at what your code is doing.
             </span>
           </div>
         </div>
@@ -371,12 +371,12 @@ function App() {
             <div className="hero-copy">
               <div className="eyebrow">
                 <span className="hero-live-dot" />
-                REPOSITORY WORKSPACE
+                YOUR CODE, AT A GLANCE
               </div>
 
               <h1>
-                Understand what a change<br className="hero-desktop-break" />
-                <span>could break.</span>
+                See what depends on
+                <span>the code you change.</span>
               </h1>
 
               <p>
@@ -385,8 +385,8 @@ function App() {
                 or bring in a public GitHub repository below.
               </p>
               <div className="hero-meta">
-                <span><Code2 size={14} /> Python analysis</span>
-                <span><GitBranch size={14} /> Dependency mapping</span>
+                <span><Code2 size={14} /> Python files</span>
+                <span><GitBranch size={14} /> File connections</span>
                 <span><ShieldCheck size={14} /> Change impact</span>
               </div>
             </div>
@@ -417,7 +417,7 @@ function App() {
               </div>
               <div className="hero-visual-footer">
                 <span className="hero-scan-bar"><i /></span>
-                <span>Tracing relationships<span className="hero-ellipsis">...</span></span>
+                <span>Following imports<span className="hero-ellipsis">...</span></span>
               </div>
             </div>
           </section>
@@ -429,10 +429,9 @@ function App() {
               </div>
 
               <div>
-                <h2>Project workspace</h2>
+                <h2>Choose a project</h2>
                 <p>
-                  Analyze your demo project or import a public
-                  GitHub repository.
+                  Pick the demo project or import a public repository from GitHub.
                 </p>
               </div>
             </div>
@@ -441,7 +440,7 @@ function App() {
               className="field-label"
               htmlFor="project-selector"
             >
-              SELECT PROJECT
+              PROJECT
             </label>
 
             <select
@@ -471,7 +470,7 @@ function App() {
               className="field-label"
               htmlFor="project-path"
             >
-              PROJECT PATH
+              FOLDER PATH
             </label>
 
             <div className="project-input-row">
@@ -508,7 +507,7 @@ function App() {
 
             <div className="path-hint">
               <ShieldCheck size={14} />
-              Local scanning is restricted to your workspace.
+              Scans run against the project folder you select.
             </div>
 
             <div className="github-import-section">
@@ -516,9 +515,9 @@ function App() {
                 <GitBranch size={20} />
 
                 <div>
-                  <h3>Import from GitHub</h3>
+                  <h3>Bring in a GitHub repo</h3>
                   <p>
-                    Import a public repository to analyze its code.
+                    Paste a public repository link to work with its code here.
                   </p>
                 </div>
               </div>
@@ -527,7 +526,7 @@ function App() {
                 className="field-label"
                 htmlFor="github-repository-url"
               >
-                GITHUB REPOSITORY URL
+                REPOSITORY LINK
               </label>
 
               <div className="project-input-row">
@@ -566,9 +565,7 @@ function App() {
               </div>
 
               <p className="input-hint">
-                Public repositories only. Imported code is cloned
-                locally; RepoMedic does not run repository scripts
-                during import.
+                Public repositories only. The code is copied locally; import does not run its scripts.
               </p>
 
               {repositories.length > 0 && (
