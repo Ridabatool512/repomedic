@@ -22,7 +22,7 @@
   width: 44px;
   height: 44px;
   flex-shrink: 0;
-  color: #a99aff;
+  color: #ff667a;
   background: #242044;
   border: 1px solid #393263;
   border-radius: 12px;
@@ -66,7 +66,7 @@
 }
 
 .bug-input-row input:focus {
-  border-color: #8b7cf6;
+  border-color: #e11d3f;
 }
 
 .bug-input-row button {
@@ -76,7 +76,7 @@
   gap: 8px;
   padding: 0 17px;
   color: white;
-  background: #7965e8;
+  background: #d71935;
   border: 0;
   border-radius: 8px;
   font-weight: 600;
@@ -460,9 +460,9 @@
   gap: 8px;
   margin: 14px 0;
   padding: 10px 15px;
-  border: 1px solid rgba(139, 124, 255, 0.45);
+  border: 1px solid rgba(225, 29, 63, 0.45);
   border-radius: 10px;
-  background: rgba(139, 124, 255, 0.12);
+  background: rgba(225, 29, 63, 0.12);
   color: inherit;
   font: inherit;
   font-weight: 600;
@@ -471,8 +471,8 @@
 }
 
 .bug-recommend-fix-button:hover:not(:disabled) {
-  background: rgba(139, 124, 255, 0.2);
-  border-color: rgba(139, 124, 255, 0.75);
+  background: rgba(225, 29, 63, 0.2);
+  border-color: rgba(225, 29, 63, 0.75);
 }
 
 .bug-recommend-fix-button:disabled {
@@ -483,9 +483,9 @@
 .bug-ai-result {
   margin: 8px 0 18px;
   padding: 17px;
-  border: 1px solid rgba(139, 124, 255, 0.28);
+  border: 1px solid rgba(225, 29, 63, 0.28);
   border-radius: 14px;
-  background: rgba(139, 124, 255, 0.055);
+  background: rgba(225, 29, 63, 0.055);
 }
 
 .bug-ai-result-heading {
@@ -502,7 +502,7 @@
   height: 38px;
   flex-shrink: 0;
   border-radius: 11px;
-  background: rgba(139, 124, 255, 0.15);
+  background: rgba(225, 29, 63, 0.15);
 }
 
 .bug-ai-result-heading strong,
@@ -728,8 +728,8 @@
   padding: 11px 12px;
   min-width: 0;
   color: #c9c1ff;
-  background: rgba(139, 124, 246, 0.08);
-  border: 1px solid rgba(139, 124, 246, 0.2);
+  background: rgba(225, 29, 63, 0.08);
+  border: 1px solid rgba(225, 29, 63, 0.2);
   border-radius: 9px;
   font-size: 12px;
   overflow-wrap: anywhere;
@@ -752,8 +752,8 @@
   height: 26px;
   flex-shrink: 0;
   color: #c9c1ff;
-  background: rgba(139, 124, 246, 0.12);
-  border: 1px solid rgba(139, 124, 246, 0.3);
+  background: rgba(225, 29, 63, 0.12);
+  border: 1px solid rgba(225, 29, 63, 0.3);
   border-radius: 8px;
   font-size: 12px;
   font-weight: 700;
@@ -794,17 +794,17 @@
 .bug-action-button:hover:not(:disabled),
 .bug-patch-validation-actions button:hover:not(:disabled) {
   background: #27334b;
-  border-color: #7f73da;
+  border-color: #b91c36;
 }
 
 .bug-action-button.primary {
   color: #fff;
-  background: #6e5bd5;
-  border-color: #8171e8;
+  background: #d71935;
+  border-color: #b91c36;
 }
 
 .bug-action-button.primary:hover:not(:disabled) {
-  background: #7c68e8;
+  background: #f02b46;
 }
 
 .bug-action-button.danger {
@@ -948,8 +948,8 @@
   gap: 11px;
   padding: 14px;
   color: #dce3f3;
-  background: rgba(139, 124, 246, 0.07);
-  border: 1px solid rgba(139, 124, 246, 0.3);
+  background: rgba(225, 29, 63, 0.07);
+  border: 1px solid rgba(225, 29, 63, 0.3);
   border-radius: 10px;
   cursor: pointer;
 }
@@ -1186,7 +1186,7 @@
 
 .bug-filters input:focus,
 .bug-filters select:focus {
-  outline: 2px solid #8b7cf6;
+  outline: 2px solid #e11d3f;
   outline-offset: 2px;
 }
 
@@ -1288,3 +1288,9 @@
 .bug-panel button, .bug-panel input, .bug-panel select, .bug-panel [role="button"] { accent-color: #e11d3f; }
 .bug-panel button:focus-visible, .bug-panel input:focus-visible, .bug-panel select:focus-visible { outline-color: #ff5268 !important; }
 .bug-panel .active, .bug-panel .selected { border-color: #e11d3f !important; }
+
+
+/* Final charcoal/red cleanup for all remaining bug-panel surfaces */
+.bug-panel, .bug-summary-card, .bug-severity-card, .bug-finding, .bug-ai-result, .bug-patch-management, .bug-application-preview, .bug-safe-patch-result, .bug-patch-validation, .bug-validation-item { background-color: #151515 !important; }
+.bug-panel-icon, .bug-ai-icon, .bug-patch-file, .bug-step-number { background-color: #202020 !important; border-color: #3a3a3a !important; }
+.bug-action-button.primary, .bug-input-row button { background: #d71935 !important; border-color: #d71935 !important; }
