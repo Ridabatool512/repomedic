@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://repomedic-api-hyg8.onrender.com",
   timeout: 30000,
   headers: {
     "Content-Type": "application/json",
@@ -212,7 +212,7 @@ export async function getPatchHistory(projectPath) {
 }
 
 // ============================================================
-// ROLLBACK AN APPLIED PATCH
+// ROLL BACK AN APPLIED PATCH
 // ============================================================
 
 export async function rollbackPatch(projectPath, patchId) {
