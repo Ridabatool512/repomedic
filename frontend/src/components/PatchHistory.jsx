@@ -118,17 +118,17 @@ export default function PatchHistory({
 
   async function handleRollback(patch) {
     if (patch.status === "rolled_back") {
-      setNotice("This patch has already been rolled back.");
+      setNotice("This patch was already rolled back.");
       return;
     }
 
     if (!patch.backup_exists) {
-      setError("The backup file is missing. Rollback is unavailable.");
+      setError("The backup file is missing, so this patch can't be rolled back.");
       return;
     }
 
     const confirmed = window.confirm(
-      `Roll back this patch?\n\n` +
+      `Restore the original file?\n\n` +
       `File: ${patch.file}\n` +
       `Patch ID: ${patch.patch_id}\n\n` +
       "This restores the saved original file contents. Any later edits to " +
@@ -149,7 +149,7 @@ export default function PatchHistory({
 
       setNotice(
         result.message ||
-        `Rollback completed for ${patch.file}.`
+        `Restored ${patch.file}.`
       );
 
       await loadHistory();
@@ -178,7 +178,7 @@ export default function PatchHistory({
 
           <div>
             <h2>Patch History</h2>
-            <p>Review previous code changes and restore saved backups.</p>
+            <p>See earlier patches or restore a saved backup.</p>
           </div>
         </div>
 
@@ -244,9 +244,9 @@ export default function PatchHistory({
       ) : history.length === 0 ? (
         <div className="patch-history-empty">
           <History size={30} />
-          <strong>No patch records found</strong>
+          <strong>No patches yet</strong>
           <p>
-            Apply an approved patch to a project to create a history record.
+            Patch records will show up here after you apply a patch.
           </p>
         </div>
       ) : (
@@ -293,8 +293,8 @@ export default function PatchHistory({
                 <div>
                   <strong>
                     {patch.backup_exists
-                      ? "Backup available"
-                      : "Backup missing"}
+                      ? "Backup saved"
+                      : "Backup not found"}
                   </strong>
                   <p>{patch.backup_file || "No backup path recorded"}</p>
                 </div>
@@ -302,7 +302,7 @@ export default function PatchHistory({
 
               {patch.rolled_back_at && (
                 <p className="patch-history-rollback-date">
-                  Rolled back: {formatDate(patch.rolled_back_at)}
+                  Restored: {formatDate(patch.rolled_back_at)}
                 </p>
               )}
 
@@ -330,7 +330,7 @@ export default function PatchHistory({
                     ? "Restoring..."
                     : patch.status === "rolled_back"
                       ? "Already rolled back"
-                      : "Roll back patch"}
+                      : "Restore original"}
                 </button>
               </div>
             </article>
