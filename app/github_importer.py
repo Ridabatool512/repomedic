@@ -1,4 +1,5 @@
 
+import os
 import re
 import shutil
 import subprocess
@@ -8,8 +9,11 @@ from urllib.parse import urlparse
 from fastapi import HTTPException
 
 
-WORKSPACE_ROOT = (
-    Path(__file__).resolve().parent.parent / "workspace"
+WORKSPACE_ROOT = Path(
+    os.getenv(
+        "REPOMEDIC_WORKSPACE_ROOT",
+        str(Path(__file__).resolve().parent.parent / "workspace"),
+    )
 ).resolve()
 
 
