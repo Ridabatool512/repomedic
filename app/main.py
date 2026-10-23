@@ -1,5 +1,6 @@
 
 import json
+import os
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
@@ -49,8 +50,11 @@ app.add_middleware(
 # Workspace configuration
 # --------------------------------------------------
 
-WORKSPACE_ROOT = (
-    Path(__file__).resolve().parent.parent / "workspace"
+WORKSPACE_ROOT = Path(
+    os.getenv(
+        "REPOMEDIC_WORKSPACE_ROOT",
+        str(Path(__file__).resolve().parent.parent / "workspace"),
+    )
 ).resolve()
 
 
