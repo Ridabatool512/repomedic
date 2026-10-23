@@ -91,9 +91,9 @@ function RecommendationPanel({ result }) {
         </div>
 
         <div>
-          <strong>{result.title ?? "Fix recommendation"}</strong>
+          <strong>{result.title ?? "Suggested fix"}</strong>
           <p>
-            Local rule-based analysis
+            Checked with local rules
             {result.confidence ? ` · ${result.confidence}` : ""}
           </p>
         </div>
@@ -101,14 +101,14 @@ function RecommendationPanel({ result }) {
 
       {result.explanation && (
         <div className="bug-ai-section">
-          <strong>Why this is an issue</strong>
+          <strong>What's wrong</strong>
           <p>{result.explanation}</p>
         </div>
       )}
 
       {result.recommendation && (
         <div className="bug-ai-section">
-          <strong>Recommended fix</strong>
+          <strong>One way to fix it</strong>
           <p>{result.recommendation}</p>
         </div>
       )}
@@ -135,14 +135,14 @@ function RecommendationPanel({ result }) {
         <div>
           <strong>
             {result.read_only
-              ? "Source code remains unchanged"
-              : "Review changes before applying"}
+              ? "Your files haven't been changed"
+              : "Check the changes before applying"}
           </strong>
 
           <p>
             {result.patch_available
-              ? "A proposed patch is available for review."
-              : "No automatic patch is available. Review the recommendation and test changes manually."}
+              ? "There's a patch you can review."
+              : "No patch was prepared. Review the suggestion and make the change yourself, then test it."}
           </p>
 
           {result.needs_manual_review && (
@@ -165,8 +165,8 @@ function SafePatchPanel({ result }) {
         <div>
           <strong>
             {result.patch_available
-              ? "Safe patch candidate generated"
-              : "Automatic patch unavailable"}
+              ? "Patch ready to review"
+              : "Couldn't prepare a patch"}
           </strong>
 
           <p>
@@ -216,7 +216,7 @@ function PatchValidationPanel({
       <div className="bug-section-heading">
         <div>
           <h4>Validation checks</h4>
-          <p>Check the proposed code before applying it.</p>
+          <p>Check this code before applying it.</p>
         </div>
 
         {result && (
@@ -225,7 +225,7 @@ function PatchValidationPanel({
               validationPassed ? "success" : "danger"
             }`}
           >
-            {validationPassed ? "Validation passed" : "Review required"}
+            {validationPassed ? "Checks passed" : "Needs a look"}
           </span>
         )}
       </div>
@@ -241,7 +241,7 @@ function PatchValidationPanel({
           ) : (
             <CheckCircle2 size={17} />
           )}
-          Validate Syntax
+          Check syntax
         </button>
 
         <button
@@ -254,7 +254,7 @@ function PatchValidationPanel({
           ) : (
             <ShieldCheck size={17} />
           )}
-          Run Tests on Temporary Copy
+          Test a temporary copy
         </button>
       </div>
 
@@ -949,7 +949,7 @@ export default function BugDetectionPanel({
         </div>
 
         <div>
-          <h2>Smart Bug Detection</h2>
+          <h2>Find bugs</h2>
           <p>
             Detect suspicious Python patterns, security risks, and syntax
             errors in your project.
