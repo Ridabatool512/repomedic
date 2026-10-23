@@ -258,7 +258,10 @@ def generate_safe_patch(
             "available": False,
             "patch_available": False,
             "error": "No safe patch strategy is available for this rule.",
+            "file": relative_file,
+            "line": line_number,
             "read_only": True,
+            "needs_manual_review": True,
         }
 
     candidate, note = _build_candidate(source, line_number, rule_ids)
