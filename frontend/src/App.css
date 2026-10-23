@@ -565,3 +565,31 @@ h1, h2, h3, h4, h5, strong { color: inherit; }
 .primary-button { background: linear-gradient(135deg, #e11d3f, #991b2b) !important; border-color: #e11d3f !important; }
 .hero-code, .orbit-node { background: #1b1b1e !important; border-color: #45454b !important; box-shadow: none !important; }
 .section-icon.purple { background: #35151b !important; }
+
+
+/* HARD OVERRIDE: eliminate purple/blue-tinted card surfaces across the app */
+:root {
+  --panel: #151515 !important;
+  --card: #151515 !important;
+  --surface: #151515 !important;
+  --accent: #e11d3f !important;
+  --accent-color: #e11d3f !important;
+}
+.hero, .hero-card, .project-panel, .panel, .card, .stat-card,
+.analysis-card, .section-card, .result-card, .workspace-card,
+.analysis-visual, .graph-node, .graph-main, .graph-a, .graph-b, .graph-c,
+.fix-preview, .fix-preview-card, .bug-panel, .bug-severity-card,
+.bug-code-section-heading, .bug-approval-check, .section-icon,
+[class*="card"], [class*="panel"], [class*="tile"] {
+  background-color: #151515 !important;
+  background-image: none !important;
+  border-color: #343434;
+}
+.hero {
+  background: linear-gradient(125deg, #171717 0%, #101010 70%, #241014 100%) !important;
+}
+.primary-button, .primary-btn, .btn-primary, button.primary {
+  color: #fff !important;
+  background: #c1122f !important;
+  border-color: #c1122f !important;
+}
