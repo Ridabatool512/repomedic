@@ -22,7 +22,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #9e9bf7;
+  color: #ff667a;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 1.4px;
@@ -63,7 +63,7 @@
   border: 1px solid var(--border, #303345);
   border-radius: 10px;
   color: inherit;
-  background: var(--surface, #171a28);
+  background: #151515;
   font-size: 12px;
 }
 
@@ -95,7 +95,7 @@
   padding: 13px;
   border: 1px solid var(--border, #303345);
   border-radius: 12px;
-  background: var(--surface, #171a28);
+  background: #151515;
 }
 
 .dep-metric-icon {
@@ -106,7 +106,7 @@
   height: 28px;
   border-radius: 8px;
   color: #a7a4ff;
-  background: #34324f;
+  background: #202020;
 }
 
 .dep-metric-label {
@@ -169,7 +169,7 @@
   border: 1px solid var(--border, #303345);
   border-radius: 10px;
   color: var(--text-muted, #9599ac);
-  background: var(--surface, #171a28);
+  background: #151515;
 }
 
 .dep-search input {
@@ -190,7 +190,7 @@
   padding: 4px;
   border: 1px solid var(--border, #303345);
   border-radius: 10px;
-  background: var(--surface, #171a28);
+  background: #151515;
 }
 
 .dep-tabs button {
@@ -204,7 +204,7 @@
 
 .dep-tabs button.selected {
   color: #fff;
-  background: #514da0;
+  background: #d71935;
 }
 
 .dep-layout {
@@ -220,7 +220,7 @@
   min-width: 0;
   border: 1px solid var(--border, #303345);
   border-radius: 12px;
-  background: var(--surface, #171a28);
+  background: #151515;
 }
 
 .dep-graph-wrap {
@@ -232,7 +232,7 @@
   display: block;
   width: 100%;
   min-height: 260px;
-  color: #aaa7ff;
+  color: #ff667a;
 }
 
 .dep-edge {
@@ -261,7 +261,7 @@
 
 .dep-node:hover rect,
 .dep-node:focus rect {
-  stroke: #aaa7ff;
+  stroke: #ff667a;
 }
 
 .dep-node.active rect {
@@ -288,13 +288,13 @@
 .dep-legend-line {
   width: 18px;
   height: 2px;
-  background: #aaa7ff;
+  background: #ff667a;
 }
 
 .dep-legend-node {
   width: 9px;
   height: 9px;
-  border: 2px solid #aaa7ff;
+  border: 2px solid #ff667a;
   border-radius: 3px;
 }
 
@@ -307,7 +307,7 @@
   align-items: center;
   gap: 7px;
   margin-bottom: 13px;
-  color: #aaa7ff;
+  color: #ff667a;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 1px;
@@ -344,7 +344,7 @@
   text-align: left;
   overflow-wrap: anywhere;
   border: 0;
-  color: #c4c2ff;
+  color: #ff667a;
   background: transparent;
   font-size: 11px;
 }
@@ -390,7 +390,7 @@
 
 .dep-file-item:hover,
 .dep-file-item.active {
-  background: rgba(137, 132, 255, .12);
+  background: rgba(225, 29, 63, .12);
 }
 
 .dep-empty {
@@ -400,7 +400,7 @@
   padding: 38px 16px;
   border: 1px dashed var(--border, #303345);
   border-radius: 12px;
-  color: #aaa7ff;
+  color: #ff667a;
   text-align: center;
 }
 
@@ -450,7 +450,7 @@
 }
 
 .dep-ranking-row strong {
-  color: #aaa7ff;
+  color: #ff667a;
 }
 
 .dep-bottom-card p {
@@ -492,3 +492,9 @@
     flex-wrap: wrap;
   }
 }
+
+
+/* Final charcoal/red cleanup for dependency explorer surfaces */
+.dep-layout, .dep-card, .dep-panel, .dep-bottom-card, .dep-file-list, .dep-file-item.active, .dep-file-item:hover { background-color: #151515 !important; }
+.dep-empty { color: #ff667a; }
+.dep-ranking-row strong { color: #ff667a; }
