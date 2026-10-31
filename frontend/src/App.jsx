@@ -440,8 +440,8 @@ function App() {
               </div>
               <div className="dependency-mini-map">
                 <svg className="dependency-lines" viewBox="0 0 250 148" fill="none" aria-hidden="true">
-                  <path className="dependency-line line-a" d="M125 42 V65 H57 V86" />
-                  <path className="dependency-line line-b" d="M125 65 H193 V86" />
+                  <path className="dependency-line line-a" d="M125 42 V65 H40 V86" />
+                  <path className="dependency-line line-b" d="M125 65 H210 V86" />
                   <circle cx="125" cy="65" r="3" fill="#f07a88" />
                 </svg>
                 <div className="mini-file mini-file-main">
