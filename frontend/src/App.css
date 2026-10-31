@@ -1063,3 +1063,95 @@ textarea:focus {
     animation: none !important;
   }
 }
+
+
+/* Final hero layout: keep the entire dependency animation inside the hero */
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 20px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+.hero p {
+  max-width: 620px;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.hero-visual {
+  flex: 0 1 auto;
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 18px 22px 15px;
+  overflow: hidden;
+}
+
+.dependency-mini-map {
+  width: 100%;
+  height: 205px;
+  overflow: hidden;
+}
+
+.dependency-lines {
+  inset: 0;
+  left: 0;
+  right: auto;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  transform: none;
+}
+
+.mini-file-main {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.mini-file-left { left: 0; }
+.mini-file-right { right: 0; }
+
+@media (max-width: 760px) {
+  .hero {
+    gap: 16px;
+    padding: 22px 16px;
+  }
+
+  .hero p {
+    font-size: 10px;
+  }
+
+  .hero-visual {
+    width: 100%;
+    max-width: 100%;
+    padding: 14px 10px 12px;
+  }
+
+  .dependency-mini-map {
+    height: 180px;
+  }
+
+  .mini-file {
+    min-width: 0;
+    max-width: 46%;
+    gap: 6px;
+    padding: 9px 7px;
+  }
+
+  .mini-file strong { font-size: 10px; }
+  .mini-file small { font-size: 8px; }
+  .mini-file-left, .mini-file-right { top: 108px; }
+}
