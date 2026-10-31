@@ -946,3 +946,120 @@ textarea:focus {
     margin: 4px auto 0;
   }
 }
+
+
+/* Hackathon hero refinement: make the animated dependency map a focal point
+   and keep the supporting slogan copy quieter. */
+.hero {
+  gap: 24px;
+  padding: 32px 34px 30px;
+}
+
+.hero p {
+  max-width: 640px;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.hero-visual {
+  width: min(100%, 720px);
+  max-width: 720px;
+  padding: 18px 22px 15px;
+  margin: 10px auto 0;
+  border-radius: 14px;
+  box-shadow: 0 18px 48px #00000038, 0 0 34px #e879870b;
+}
+
+.dependency-mini-map {
+  height: 205px;
+  margin-top: 12px;
+}
+
+.dependency-lines {
+  max-width: 430px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.mini-file {
+  min-width: 138px;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 9px;
+}
+
+.mini-file strong {
+  font-size: 11px;
+}
+
+.mini-file small {
+  font-size: 9px;
+}
+
+.mini-file-main {
+  top: 12px;
+}
+
+.mini-file-left,
+.mini-file-right {
+  top: 122px;
+}
+
+.hero-visual-top > span:first-child {
+  font-size: 9px;
+}
+
+.hero-visual-count {
+  font-size: 9px;
+}
+
+.hero-visual-footer {
+  padding-top: 13px;
+  font-size: 10px;
+}
+
+.hero-scan-bar {
+  width: 56px;
+  height: 4px;
+}
+
+@media (max-width: 760px) {
+  .hero {
+    gap: 18px;
+    padding: 24px 21px;
+  }
+
+  .hero p {
+    font-size: 11px;
+  }
+
+  .hero-visual {
+    width: 100%;
+    max-width: 560px;
+    padding: 15px 13px 12px;
+  }
+
+  .dependency-mini-map {
+    height: 180px;
+  }
+
+  .mini-file {
+    min-width: 118px;
+    gap: 7px;
+    padding: 10px 8px;
+  }
+
+  .mini-file-left,
+  .mini-file-right {
+    top: 108px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dependency-line,
+  .mini-file,
+  .hero-scan-bar i,
+  .hero-ellipsis {
+    animation: none !important;
+  }
+}
