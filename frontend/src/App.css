@@ -1155,3 +1155,118 @@ textarea:focus {
   .mini-file small { font-size: 8px; }
   .mini-file-left, .mini-file-right { top: 108px; }
 }
+
+
+/* Hero composition: the copy and animation share the full hero canvas */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  align-items: center;
+  justify-content: stretch;
+  gap: clamp(22px, 3vw, 42px);
+  min-height: 330px;
+  padding: 30px;
+  overflow: hidden;
+}
+
+.hero-copy {
+  width: 100%;
+  min-width: 0;
+  align-self: center;
+}
+
+.hero h1 {
+  font-size: clamp(27px, 2.7vw, 38px);
+}
+
+.hero p {
+  max-width: 390px;
+  font-size: 10px;
+  line-height: 1.65;
+}
+
+.hero-meta {
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.hero-visual {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  min-height: 270px;
+  margin: 0;
+  padding: 18px 20px 15px;
+  background: linear-gradient(145deg, #111 0%, #0d0d0e 100%);
+  border-radius: 13px;
+}
+
+.dependency-mini-map {
+  flex: 1;
+  min-height: 205px;
+  height: auto;
+  margin-top: 12px;
+}
+
+.dependency-lines {
+  inset: 0;
+  left: 0;
+  right: auto;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  transform: none;
+}
+
+.mini-file-main {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.mini-file-left { left: 0; }
+.mini-file-right { right: 0; }
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 18px;
+    padding: 24px;
+  }
+
+  .hero-visual {
+    padding: 15px 12px 12px;
+  }
+
+  .mini-file {
+    min-width: 0;
+    max-width: 46%;
+    gap: 6px;
+    padding: 9px 7px;
+  }
+}
+
+@media (max-width: 700px) {
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    min-height: 0;
+    padding: 22px 16px;
+  }
+
+  .hero-copy { width: 100%; }
+  .hero p { font-size: 10px; }
+  .hero-visual {
+    min-height: 235px;
+    width: 100%;
+    padding: 14px 10px 12px;
+  }
+
+  .dependency-mini-map { min-height: 180px; }
+  .mini-file strong { font-size: 10px; }
+  .mini-file small { font-size: 8px; }
+  .mini-file-left, .mini-file-right { top: 108px; }
+}
