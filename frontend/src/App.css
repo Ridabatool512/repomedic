@@ -1270,3 +1270,269 @@ textarea:focus {
   .mini-file small { font-size: 8px; }
   .mini-file-left, .mini-file-right { top: 108px; }
 }
+
+
+/* =========================================================
+   RepoMedic signature palette — Obsidian, Crimson & Soft White
+   ========================================================= */
+:root {
+  color-scheme: dark;
+  --accent: #f0445e;
+  --accent-strong: #e11d3f;
+  --muted: #a3aab8;
+  --border: rgba(255, 255, 255, 0.09);
+  --panel: #111216;
+  --green: #d8dde6;
+}
+
+html,
+body {
+  background: #08090b !important;
+  color: #f5f5f7;
+}
+
+body {
+  background:
+    radial-gradient(ellipse at 82% 0%, rgba(225, 29, 63, .075), transparent 34%),
+    #08090b !important;
+}
+
+.sidebar {
+  background: #0b0c0f !important;
+  border-right: 1px solid #24252b !important;
+}
+
+.brand-mark,
+.section-icon,
+.stat-icon {
+  background: linear-gradient(145deg, #f0445e, #b80f2e) !important;
+  color: #fff !important;
+  box-shadow: 0 5px 18px rgba(225, 29, 63, .18) !important;
+}
+
+.brand-accent,
+.eyebrow,
+.hero-live-dot,
+.nav-link.active svg,
+.github-import-heading > svg {
+  color: #ff5b72 !important;
+}
+
+.nav-link {
+  color: #a2a7b4;
+  border-color: transparent !important;
+}
+
+.nav-link:hover {
+  color: #fff;
+  background: #ffffff08;
+}
+
+.nav-link.active,
+.sidebar .nav-link[aria-current="page"] {
+  color: #fff !important;
+  background: linear-gradient(90deg, rgba(225, 29, 63, .19), rgba(225, 29, 63, .055)) !important;
+  border: 1px solid rgba(240, 68, 94, .38) !important;
+  box-shadow: inset 3px 0 #f0445e;
+}
+
+.topbar {
+  background: rgba(8, 9, 11, .78);
+  border-bottom-color: #22232a !important;
+}
+
+.topbar-badge,
+.api-status,
+.scan-badge {
+  background: #111216 !important;
+  border: 1px solid #30313a !important;
+}
+
+.hero {
+  background:
+    radial-gradient(ellipse at 88% 42%, rgba(225, 29, 63, .11), transparent 43%),
+    linear-gradient(125deg, #151519 0%, #101115 60%, #151014 100%) !important;
+  border: 1px solid #57212b !important;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .2), inset 0 1px rgba(255,255,255,.025);
+}
+
+.hero::after {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #f0445e, rgba(240,68,94,.12), transparent);
+}
+
+.hero h1 span { color: #ff7185 !important; }
+
+.hero-visual {
+  background: linear-gradient(145deg, #0d0e11, #121014) !important;
+  border: 1px solid #54222c !important;
+  box-shadow: 0 16px 36px rgba(0,0,0,.28), inset 0 1px rgba(255,255,255,.025) !important;
+}
+
+.mini-file {
+  background: #17171b !important;
+  border-color: #383941 !important;
+  color: #ff7185 !important;
+  box-shadow: 0 7px 18px rgba(0,0,0,.18);
+}
+
+.mini-file-main {
+  background: #201317 !important;
+  border-color: #8e3343 !important;
+}
+
+.mini-file-main i,
+.hero-scan-bar i {
+  background: #f0445e !important;
+  box-shadow: 0 0 10px rgba(240,68,94,.45);
+}
+
+.dependency-line {
+  stroke: #bd4558 !important;
+}
+
+.project-panel,
+.panel,
+.stat-card,
+.card,
+.section-card,
+.analysis-card,
+.result-card,
+.workspace-card {
+  background: linear-gradient(145deg, #121317, #0f1013) !important;
+  border: 1px solid #2c2d34 !important;
+  box-shadow: 0 10px 28px rgba(0,0,0,.12);
+}
+
+.project-panel:hover,
+.panel:hover,
+.stat-card:hover,
+.card:hover,
+.section-card:hover,
+.analysis-card:hover,
+.result-card:hover,
+.workspace-card:hover {
+  border-color: #65303a !important;
+}
+
+.stat-card:hover { transform: translateY(-2px); }
+
+.project-input-row input,
+.full-input,
+input,
+select,
+textarea {
+  color: #f5f5f7 !important;
+  background: #0b0c0f !important;
+  border: 1px solid #34353d !important;
+  -webkit-text-fill-color: #f5f5f7;
+}
+
+.project-input-row input:hover,
+.full-input:hover,
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: #7a3441 !important;
+}
+
+.project-input-row input:focus,
+.full-input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #f0445e !important;
+  box-shadow: 0 0 0 3px rgba(240,68,94,.13) !important;
+}
+
+button.primary,
+.primary-button,
+.action-button,
+.run-button,
+.hero button,
+.bug-input-row button,
+.bug-action-button.primary {
+  color: #fff !important;
+  background: linear-gradient(135deg, #f0445e, #c9183b) !important;
+  border: 1px solid #f0445e !important;
+  box-shadow: 0 5px 16px rgba(225,29,63,.15);
+}
+
+button.primary:hover,
+.primary-button:hover:not(:disabled),
+.action-button:hover,
+.run-button:hover,
+.hero button:hover,
+.bug-input-row button:hover,
+.bug-action-button.primary:hover {
+  background: linear-gradient(135deg, #ff5b72, #e11d3f) !important;
+  border-color: #ff7185 !important;
+}
+
+.secondary-button,
+button.secondary,
+.bug-action-button.secondary {
+  color: #e4e5eb !important;
+  background: #1a1b20 !important;
+  border: 1px solid #3a3b44 !important;
+}
+
+.secondary-button:hover:not(:disabled),
+button.secondary:hover {
+  background: #24252b !important;
+  border-color: #74404a !important;
+}
+
+.impact-button {
+  color: #ff9aa8 !important;
+  background: rgba(225,29,63,.075) !important;
+  border: 1px solid rgba(240,68,94,.3) !important;
+}
+
+.impact-button:hover:not(:disabled) {
+  background: rgba(225,29,63,.14) !important;
+}
+
+.section-icon.purple,
+.section-icon.green {
+  color: #ff7185 !important;
+  background: rgba(225,29,63,.12) !important;
+  border-color: rgba(240,68,94,.22) !important;
+}
+
+.analysis-visual,
+pre {
+  background: #0a0b0e !important;
+  border-color: #2b2c33 !important;
+}
+
+.graph-decoration path { stroke: #c44559 !important; }
+.graph-node,
+.graph-main {
+  color: #ff7185 !important;
+  background: #201317 !important;
+  border-color: #71303c !important;
+}
+
+.risk-track { background: #292a31 !important; }
+.risk-track div { background: linear-gradient(90deg, #a5a7b2, #f0445e) !important; }
+
+.status-dot {
+  background: #f0445e !important;
+  box-shadow: 0 0 10px rgba(240,68,94,.35) !important;
+}
+
+.footer { border-top-color: #292a30 !important; }
+a { color: #ff7185; }
+a:hover { color: #ff9ba9; }
+
+::selection { color: #fff; background: #a91530; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
